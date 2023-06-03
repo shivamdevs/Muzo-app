@@ -1,0 +1,42 @@
+.ls-ol {
+    display: flex;
+    flex-wrap: nowrap;
+    position: fixed;
+    inset: 0;
+    background-color: #191728;
+    z-index: 3;
+    justify-content: center;
+    align-items: center;
+    transition: 300ms;
+}
+
+.ls-ol>svg {
+    width: 100%;
+    max-width: 100px;
+    aspect-ratio: 1 / 1;
+    animation: ls_ol_animate_rotate 1.25s linear infinite;
+}
+
+.ls-ol.ls-ol-fo {
+    opacity: 0;
+    visibility: hidden;
+}
+
+@keyframes ls_ol_animate_rotate {
+    0%, 100% {
+        rotate: 0deg;
+        scale: 1
+    }
+
+    25% {
+        rotate: 30deg;
+    }
+
+    50% {
+        scale: 0.75
+    }
+
+    75% {
+        rotate: -30deg;
+    }
+}

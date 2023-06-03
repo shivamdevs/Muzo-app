@@ -1,0 +1,45 @@
+:root {
+    --bg-primary: #191728;
+    /* Primary background color */
+    --bg-secondary: #1e1c32;
+    /* Secondary background color */
+    --bg-tertiary: #312f44;
+    /* Tertiary background color */
+    --text-primary: #FFFFFF;
+    /* Primary text color */
+    --text-secondary: #CCCCCC;
+    /* Secondary text color */
+    --accent-color: #FF5E3A;
+    /* Accent color */
+    --border-color: #444444;
+    /* Border color */
+    --shadow-color: #272540;
+    /* Shadow color */
+    --icon-color: #999999;
+    /* Icon color */
+    --hover-color: #FF5E3A;
+    /* Text color on hover */
+    --active-color: #FF5E3A;
+    /* Text color when active */
+
+    
+    --btn-color: #1e90ff;
+}
+
+@keyframes skeleton-loader {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-loader {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #1e1c32 25%, #292640 50%, #1e1c32 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loader 1.5s infinite linear;
+}

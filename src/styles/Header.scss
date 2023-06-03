@@ -1,0 +1,12 @@
+#header {
+    background-color: var(--bg-secondary);
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 10px;
+
+    .logo {
+        display: inline-flex;
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+}
