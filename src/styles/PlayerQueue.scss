@@ -1,0 +1,147 @@
+.player-queue {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    button {
+        width: 2em;
+        height: 2em;
+        border-radius: 50%;
+        border: none;
+        background-color: transparent;
+        transition: 0.2s;
+        padding: 0;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0;
+
+        &:not(:disabled):is(:hover, :focus-visible) {
+            background-color: #fff2;
+            cursor: pointer;
+        }
+    }
+
+    header {
+        padding: 10px 20px;
+        background-color: #2e2544;
+        border-bottom: 1px solid #fff2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        button {
+            font-size: 20px;
+        }
+    }
+
+    .list {
+        width: 100%;
+        flex: 1;
+        overflow: auto;
+
+        .item {
+            border-bottom: 1px solid #fff1;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            width: 100%;
+            padding: 5px 15px;
+            gap: 15px;
+            transition: 0.2s;
+
+            .count-play {
+                position: relative;
+                min-width: 1em;
+
+                .song-playing {
+                    scale: 2;
+                    color: #1e90ff;
+                }
+
+                .count {
+                    transition: 0.2s;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #727888;
+                }
+
+                .play {
+                    transition: 0.2s;
+                    position: absolute;
+                    visibility: hidden;
+                    display: inline-flex;
+                    justify-content: center;
+                    align-items: center;
+                    opacity: 0;
+                    inset: 0;
+                }
+            }
+
+            img {
+                width: 40px;
+                height: 40px;
+                border-radius: 6px;
+            }
+
+            .metadata {
+                flex: 1;
+                align-self: stretch;
+                position: relative;
+
+                .wrap {
+                    position: absolute;
+                    inset: 50% 0 auto 0;
+                    translate: 0 -50%;
+
+
+                    .name,
+                    .artist {
+                        width: 100%;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
+                    }
+
+                    .name {
+                        font-weight: 600;
+                        color: var(--text-secondary);
+                    }
+
+                    .artist {
+                        color: #727888;
+                        font-size: 12px;
+                    }
+                }
+            }
+
+            .time {
+                color: #727888;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            &:hover {
+                background-color: #ffffff09;
+
+                .count-play {
+                    .count {
+                        visibility: hidden;
+                        opacity: 0;
+                    }
+
+                    .play {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+                }
+
+                .clear {
+                    font-size: 20px;
+                }
+            }
+        }
+    }
+}

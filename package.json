@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mebtte/react-media-session": "^1.1.2",
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
+    "file-saver": "^2.0.5",
     "firebase": "^9.22.1",
     "generate-unique-id": "^2.0.1",
     "group-by": "^0.0.1",
@@ -15,6 +17,7 @@
     "react-firebase-hooks": "^5.1.1",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.9.0",
+    "react-loadsvg": "^1.0.0",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
     "sass": "^1.62.1",

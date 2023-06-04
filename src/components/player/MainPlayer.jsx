@@ -1,121 +1,108 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import 'oasismenu/themes/space.css';
 import "../../styles/Player.scss";
+import LoadSVG from 'react-loadsvg';
+import { SlOptions } from 'react-icons/sl';
+import { FaCompressAlt, FaExpandAlt } from 'react-icons/fa';
+import { BsInfoCircle } from 'react-icons/bs';
+import { MdOutlineFileDownload, MdOutlineHighQuality, MdQueueMusic } from 'react-icons/md';
+import { HiOutlineDownload } from 'react-icons/hi';
 import AppContext from '../../core/app/AppContext';
-import { GiNextButton, GiPauseButton, GiPlayButton, GiPreviousButton } from 'react-icons/gi';
-import { ImShuffle, ImVolumeMedium, ImVolumeMute2 } from 'react-icons/im';
-import { MdQueueMusic } from 'react-icons/md';
+import shuffleArray from '../../core/app/shuffleArray';
 import { OasisMenu, OasisMenuBreak, OasisMenuItem, OasisMenuTrigger } from 'oasismenu';
-import AppLogo from '../icons/AppLogo';
-
-function parseTime(totalSeconds) {
-    let hours = Math.floor(totalSeconds / 3600).toFixed(0);
-    totalSeconds %= 3600;
-    let minutes = Math.floor(totalSeconds / 60).toFixed(0);
-    let seconds = (totalSeconds % 60).toFixed(0);
-
-    return ((hours > 0) ? String(hours).padStart(2, "0") + ':' : '') + (hours > 0 ? String(minutes).padStart(2, "0") : minutes) + ':' + String(seconds).padStart(2, "0");
-};
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { ImShuffle, ImVolumeMedium, ImVolumeMute2 } from 'react-icons/im';
+import { GiNextButton, GiPauseButton, GiPlayButton, GiPreviousButton } from 'react-icons/gi';
+import parseTime from "../../core/app/parseTime";
+import convertHTMLEntities from '../../core/app/convertHTMLEntities';
+import PlayerQueue from './PlayerQueue';
+import getFileContentSize from '../../core/app/getFileContentSize';
+import downloadSongFromLink from '../../core/app/downloadSongFromLink';
 
 
 function MainPlayer() {
     const player = useRef();
 
-    const { playerList, playerIndex, updatePlayerList, updatePlayerIndex } = useContext(AppContext);
+    const { playerSong, playerList, playerIndex, updatePlayerList, updatePlayerIndex, setPlayerElement, settings, updateSettings, playerExtended, setPlayerExtended } = useContext(AppContext);
 
     const [duration, setDuration] = useState(0);
+    const [buffering, setBuffering] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [bufferedPercentage, setBufferedPercentage] = useState(0);
+    const [playerDownloadLink, setPlayerDownloadLink] = useState(null);
+    const [seekDefaultStatePlaying, setSeekDefaultStatePlaying] = useState(false);
 
     useEffect(() => {
-        if (playerList && playerIndex > -1) {
-            player.current.src = playerList[playerIndex].downloadUrl.at(-1).link;
-            try {
-                if (player.current.paused) player.current.play();
-            } catch (error) { console.error(error); }
+        if (playerSong) {
+            const downloads = playerSong.downloadUrl;
+            player.current.src = (downloads[settings.quality || 0] || downloads[0]).link;
+            try { if (player.current.paused) player.current.play(); } catch (error) { console.error(error); }
         }
-    }, [playerIndex, playerList]);
+    }, [playerSong, settings.quality]);
 
+    useEffect(() => {
+        player.current && setPlayerElement(player.current);
+    }, [setPlayerElement]);
 
-    const handleBufferProgress = () => {
-        if (player.current.buffered.length > 0) {
-            const bufferedEnd = player.current.buffered.end(player.current.buffered.length - 1);
-            const bufferedPercentage = (bufferedEnd / duration) * 100;
-            setBufferedPercentage(bufferedPercentage);
+    useEffect(() => {
+        if (player.current) {
+            player.current.volume = settings.volume;
+            player.current.muted = settings.muted;
         }
-    };
+    }, [settings.muted, settings.volume]);
 
-    const pCEnded = () => {
-        if (playerList && playerIndex > -1 && playerList[playerIndex + 1]) updatePlayerIndex(old => ++old);
-    };
-    const pCProgress = () => {
-        handleBufferProgress();
-    };
-    const pCTimeUpdate = () => {
-        setCurrentTime(player.current.currentTime);
-    };
-
-    const pCDurationChange = () => {
-        setDuration(player.current.duration);
-    };
-
-    const pCPrevious = () => {
-        if (playerList && playerIndex > -1 && playerList[playerIndex - 1]) updatePlayerIndex(old => --old);
-    };
-    const pCPlayPause = () => {
-        if (player.current.paused) {
-            try { player.current.play(); } catch (error) { console.error(error); }
+    const createDownloadLinks = () => {
+        if (playerSong) {
+            (async () => {
+                const result = [];
+                for (const download of playerSong.downloadUrl) {
+                    const size = await getFileContentSize(download.link);
+                    result.push({
+                        key: download.quality,
+                        name: `Download ${download.quality}`,
+                        after: size,
+                        link: download.link,
+                        download: `[Muzo]-${convertHTMLEntities(playerSong.name)}-${download.quality}.${download.link.split(".").at(-1)}`,
+                    });
+                }
+                setPlayerDownloadLink(result.reverse());
+            })();
         } else {
-            player.current.pause();
-        }
-    };
-    const pCNext = () => {
-        if (playerList && playerIndex > -1 && playerList[playerIndex + 1]) updatePlayerIndex(old => ++old);
-    };
-    const pCMuter = () => {
-        player.current.muted = !player.current.muted;
-    };
-    const pCShuffle = () => {
-        updatePlayerList(old => {
-            const list = [...old];
-            for (let i = list.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [list[i], list[j]] = [list[j], list[i]];
-            }
-            return list;
-        });
-        updatePlayerIndex(0);
-    };
-
-    const pCSeek = ({ target }) => {
-        player.current.currentTime = (target.value / 100) * duration;
-    };
-
-    const [seekDefaultStatePlaying, setSeekDefaultStatePlaying] = useState(false);
-    const pCSeekStart = () => {
-        if (!player.current.paused) {
-            // player.current.pause();
-            setSeekDefaultStatePlaying(true);
-            window.addEventListener('mouseup', pCSeekEnd, { once: true });
+            setPlayerDownloadLink(false);
         }
     };
 
-    const pCSeekEnd = () => {
-        if (seekDefaultStatePlaying) {
-            setSeekDefaultStatePlaying(false);
-            try { player.current.play(); } catch (error) { console.error(error); }
-        }
+    const updateAudioQuality = (quality) => {
+        const current = player.current.currentTime;
+        updateSettings("quality", quality);
+        player.current.addEventListener("loadeddata", () => player.current.currentTime = current, { once: true });
     };
-
-    const currentSong = playerList?.[playerIndex];
 
     return (
         <main id="player">
             <audio
                 ref={player}
-                onEnded={pCEnded}
-                onTimeUpdate={pCTimeUpdate}
-                onDurationChange={pCDurationChange}
-                onProgress={pCProgress}
+                onWaiting={() => setBuffering(true)}
+                onCanPlay={() => setBuffering(false)}
+                onLoadedData={() => setBuffering(false)}
+                onDurationChange={() => setDuration(player.current.duration)}
+                onTimeUpdate={() => setCurrentTime(player.current.currentTime)}
+                onEnded={() => {
+                    if (playerList && playerList[playerIndex + 1]) {
+                        player.current.pause();
+                        updatePlayerIndex(old => ++old);
+                    }
+                }}
+                onError={(error) => {
+                    setBuffering(false);
+                    console.error(error);
+                }}
+                onProgress={() => {
+                    if (player.current.buffered.length > 0) {
+                        const bufferedEnd = player.current.buffered.end(player.current.buffered.length - 1);
+                        const bufferedPercentage = (bufferedEnd / duration) * 100;
+                        setBufferedPercentage(bufferedPercentage);
+                    }
+                }}
             />
             <div className="seek">
                 <div className="times">{parseTime(currentTime)}</div>
@@ -126,49 +113,106 @@ function MainPlayer() {
                         min={0}
                         max={100}
                         step={0.1}
-                        value={((currentTime / duration) * 100).toFixed(1)}
-                        onChange={pCSeek}
-                        onMouseDown={pCSeekStart}
-                        style={{ "--progress": `${(currentTime / duration * 100).toFixed(1)}%` }}
+                        disabled={(!playerList)}
+                        onError={(error) => console.error(error)}
+                        value={((currentTime / (duration || 1)) * 100).toFixed(1)}
+                        style={{ "--progress": `${(currentTime / (duration || 1) * 100).toFixed(1)}%` }}
+                        onChange={({ target }) => {
+                            player.current.currentTime = (target.value / 100) * duration;
+                        }}
+                        onMouseDown={() => {
+                            if (!player.current.paused) {
+                                // player.current.pause();
+                                setSeekDefaultStatePlaying(true);
+                                window.addEventListener('mouseup', () => {
+                                    if (seekDefaultStatePlaying && player.current.paused) { setSeekDefaultStatePlaying(false); try { player.current.play() } catch (error) { console.error(error) } }
+                                }, { once: true });
+                            }
+                        }}
                     />
                 </div>
                 <div className="times">{parseTime(duration)}</div>
             </div>
             <div className="flexbox">
                 <div className="thumbnail">
-                    <div className="cover" style={{ backgroundImage: `url(${currentSong?.image.find(item => item.quality === "50x50").link})` }}></div>
+                    <div className="cover" style={{ backgroundImage: `url(${playerSong?.image.find(item => item.quality === "50x50").link})` }} />
                     <div className="metadata">
-                        <div className="name">{currentSong?.name}</div>
-                        <div className="artist">{currentSong?.primaryArtists}</div>
+                        <div className="name">{convertHTMLEntities(playerSong?.name)}</div>
+                        <div className="artist">{convertHTMLEntities(playerSong?.primaryArtists)}</div>
                     </div>
                 </div>
                 <div className="controls">
-                    <button type="button" disabled={(!playerList || !playerList[playerIndex - 1])} className="switch" onClick={pCPrevious}><GiPreviousButton /></button>
-                    <button type="button" disabled={(!playerList)} className="switch state" onClick={pCPlayPause}>{player.current?.paused ? <GiPlayButton /> : <GiPauseButton />}</button>
-                    <button type="button" disabled={(!playerList || !playerList[playerIndex + 1])} className="switch" onClick={pCNext}><GiNextButton /></button>
+                    <button type="button" className="switch" disabled={(!playerList || !playerList[playerIndex - 1])} onClick={() => {
+                        if (playerList && playerList[playerIndex - 1]) { player.current.pause(); updatePlayerIndex(old => --old); }
+                    }}><GiPreviousButton /></button>
+                    <button type="button" className="switch state" disabled={(!playerList)} onClick={() => {
+                        if (player.current.paused) try { player.current.play() } catch (error) { console.error(error) } else player.current.pause();
+                    }}>
+                        {buffering && <LoadSVG size="100%" color="#fff7" duration={2000} />}
+                        {player.current?.paused ? <GiPlayButton /> : <GiPauseButton />}
+                    </button>
+                    <button type="button" className="switch" disabled={(!playerList || !playerList[playerIndex + 1])} onClick={() => {
+                        if (playerList && playerList[playerIndex + 1]) { player.current.pause(); updatePlayerIndex(old => ++old); }
+                    }}><GiNextButton /></button>
                 </div>
                 <div className="opts">
-                    <button type="button" className="switch" onClick={pCMuter}>{player.current?.muted ? <ImVolumeMute2 /> : <ImVolumeMedium />}</button>
-                    <button type="button" className="switch shuffle" onClick={pCShuffle}><ImShuffle /></button>
-                    <OasisMenuTrigger name="player-queue" trigger="click" toggle placement="top-right" shiftDistance={50}>
-                        <button type="button" className="switch queue"><MdQueueMusic /></button>
+                    <OasisMenuTrigger name="player-download" trigger="click" toggle placement="top" shiftDistance={50}>
+                        <button type="button" className="switch queue" disabled={(!playerList)}><HiOutlineDownload /></button>
                     </OasisMenuTrigger>
-                    <OasisMenu name="player-queue" className="player-queue-oasis">
-                        <div className="queue-topic">Queue ({playerList?.length})</div>
-                        {playerList?.map((song, index) => <>
-                            <OasisMenuBreak />
-                            <OasisMenuItem
-                                onClick={() => updatePlayerIndex(index)}
-                                key={song.id}
-                                content={song.name}
-                                after={parseTime(parseInt(song.duration))}
-                                icon={<div className="image" data-playing={currentSong?.id === song.id}>
-                                    <img src={song.image.find(item => item.quality === "50x50").link} alt={song.name} />
-                                    <span>{currentSong?.id === song.id ? <AppLogo size={40} /> : <GiPlayButton />}</span>
-                                </div>}
-                            />
-                        </>)}
+                    <OasisMenu name="player-download" theme="space" onOpen={createDownloadLinks} onClose={() => setPlayerDownloadLink(null)} className="player-download-sync">
+                        <div className="oasisTopic">Download this song</div>
+                        <OasisMenuBreak />
+                        {playerDownloadLink === false && <div className="oasisTopic failed">Failed to create download links!</div>}
+                        {playerDownloadLink === null && <div className="loading">
+                            <div className="oasisTopic" style={{ marginBottom: "2em" }}>Creating download links...</div>
+                            <LoadSVG size={40} />
+                        </div>}
+                        {playerDownloadLink?.map(down => <OasisMenuItem key={down.key} onClick={() => downloadSongFromLink(down.link, down.download)} content={down.name} after={down.after} icon={<MdOutlineHighQuality />} statusIcon={<MdOutlineFileDownload />} />)}
                     </OasisMenu>
+                    <button type="button" className="switch shuffle" disabled={(!playerList)} onClick={() => {
+                        updatePlayerList(old => shuffleArray([...old]));
+                        player.current.pause();
+                        updatePlayerIndex(0);
+                    }}><ImShuffle /></button>
+                    <OasisMenuTrigger name="player-queue" trigger="click" toggle placement="top" shiftDistance={50}>
+                        <button type="button" className="switch queue" disabled={(!playerList)}><MdQueueMusic /></button>
+                    </OasisMenuTrigger>
+                    <OasisMenu name="player-queue" theme="space" className="player-queue-oasis">
+                        <PlayerQueue playerList={playerList} playerIndex={playerIndex} playerElement={player.current} updatePlayerList={updatePlayerList} updatePlayerIndex={updatePlayerIndex} setPlayerExtended={setPlayerExtended} />
+                    </OasisMenu>
+                    <button type="button" className="switch" disabled={(!playerList)} onClick={() => updateSettings("muted", muted => !muted)}>{settings.muted ? <ImVolumeMute2 /> : <ImVolumeMedium />}</button>
+                    <div className="seeker volume">
+                        <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            value={settings.volume}
+                            disabled={(!playerList || settings.muted)}
+                            onChange={({ target }) => {
+                                updateSettings("volume", target.value);
+                            }}
+                            style={{ "--progress": `${(settings.volume * 100).toFixed(1)}%` }}
+                        />
+                    </div>
+                    <OasisMenuTrigger name="player-options" trigger="click" toggle placement="top-right" shiftDistance={50}>
+                        <button type="button" className="switch" disabled={(!playerList)}><SlOptions /></button>
+                    </OasisMenuTrigger>
+                    <OasisMenu name="player-options" theme="space">
+                        <div className="oasisTopic">Login for more</div>
+                        <OasisMenuBreak />
+                        <OasisMenuItem content="Song info" icon={<BsInfoCircle />} />
+                        <OasisMenuBreak />
+                        <div className="oasisTopic">Audio Quality</div>
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(4)} checked={settings.quality === 4} content="Extreme" after="320kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(3)} checked={settings.quality === 3} content="Best" after="160kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(2)} checked={settings.quality === 2} content="Good" after="96kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(1)} checked={settings.quality === 1} content="Fair" after="48kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(0)} checked={settings.quality === 0} content="Low" after="12kbps" />
+                    </OasisMenu>
+                    <button type="button" className="switch" disabled={(!playerList)} onClick={() => setPlayerExtended(ext => !ext)}>
+                        {playerExtended ? <FaCompressAlt /> : <FaExpandAlt />}
+                    </button>
                 </div>
             </div>
         </main>

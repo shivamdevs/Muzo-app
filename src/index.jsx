@@ -5,6 +5,7 @@ import * as serviceWorkerRegistration from './core/worker/serviceWorkerRegistrat
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { OasisMenuBlock } from 'oasismenu';
+import { Toaster } from 'react-hot-toast';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -13,6 +14,7 @@ root.render(
             <OasisMenuBlock>
                 <App />
             </OasisMenuBlock>
+            <Toaster position="bottom-center" containerStyle={{ bottom: 116 }} />
         </BrowserRouter>
     </React.StrictMode>
 );

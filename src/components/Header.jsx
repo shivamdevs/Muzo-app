@@ -1,7 +1,7 @@
 import React from 'react';
 import "../styles/Header.scss";
 import AppLogo from './icons/AppLogo';
-import AppName from './AppName';
+import AppName from './icons/AppName';
 
 function Header() {
     return (

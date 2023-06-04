@@ -3,23 +3,30 @@ import React, { useContext, useEffect, useState } from 'react';
 import AppData from '../../core/app/AppData';
 import PlayIcon from '../icons/PlayIcon';
 import AppContext from '../../core/app/AppContext';
+import convertHTMLEntities from '../../core/app/convertHTMLEntities';
 
 function HomeListItem({ data = null }) {
 
-    const { updatePlayerList, updatePlayerIndex } = useContext(AppContext);
+    const { updatePlayerList, updatePlayerIndex, playerElement } = useContext(AppContext);
     const [songInfo, setSongInfo] = useState(null);
 
-    const name = data?.name || data?.title;
-    const artist = (data?.primaryArtists || data?.artists)?.map((art) => art.name).join(", ") || "Various Artists";
+    const name = convertHTMLEntities(data?.name || data?.title);
+    const artist = convertHTMLEntities((data?.primaryArtists || data?.artists)?.map((art) => art.name).join(", ") || "Various Artists");
 
     useEffect(() => {
-        data && axios.get(`${AppData.api}/${data.type}${data.type.endsWith("s") ? "" : "s"}?${data.type === "playlist" ? `id=${data.id}` : `link=${data.url}`}`).then(({ data: result }) => {
+        if (!data) return;
+        const dataType = data.album ? "album" : data.type;
+        const dataURL = data.album ? data.album.url : data.url;
+        const isPlaylist = dataType === "playlist";
+        const dataTypeEnded = dataType + (dataType.endsWith("s") ? "" : "s");
+        axios.get(`${AppData.api}/${dataTypeEnded}?${isPlaylist ? `id=${data.id}` : `link=${dataURL}`}`).then(({ data: result }) => {
             setSongInfo(data.type === "song" ? result.data : result.data.songs);
         }).catch(error => console.error(error));
     }, [data]);
 
     const setSongs = (e) => {
         e.stopPropagation();
+        playerElement.pause();
         updatePlayerList(songInfo);
         updatePlayerIndex(0);
     };

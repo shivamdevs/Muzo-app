@@ -7,6 +7,8 @@ const AppData = {
         copyright: "MyOasis.tech ©2022-" + (new Date()).getFullYear(),
     },
 
+    storage: "muzo:settings",
+
     api: "https://saavn.me",
     apiPath: {
         home: "https://saavn.me/modules?language=hindi,english",
