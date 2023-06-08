@@ -2,11 +2,99 @@
     background-color: var(--bg-secondary);
     display: flex;
     flex-wrap: nowrap;
-    padding: 10px;
+    padding: 10px 20px;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
 
     .logo {
         display: inline-flex;
         flex-wrap: nowrap;
         gap: 10px;
+        cursor: pointer;
+    }
+
+    .search {
+        flex: 1;
+        display: inline-flex;
+
+        .box {
+            width: 100%;
+            max-width: 600px;
+            background-color: #0006;
+            margin-inline: auto;
+            border-radius: 50px;
+            display: inline-flex;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            height: 40px;
+            overflow: hidden;
+
+            input {
+                flex: 6;
+                background: none;
+                padding: 0 20px;
+                outline: none;
+                border: none;
+            }
+        }
+    }
+
+    .lang {
+        flex-wrap: nowrap;
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 9px 20px;
+        background-color: #0004;
+        border-radius: 40px;
+        border: 1px solid #fff4;
+        transition: 0.2s;
+
+        svg {
+            margin-left: 10px;
+            scale: 2;
+        }
+
+        &:is(:hover, :focus-visible) {
+            background-color: var(--bg-tertiary);
+            cursor: pointer;
+
+        }
+    }
+
+    & {
+        .add-user {
+            display: inline-block;
+            padding: 8px 20px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 4px;
+            background-color: dodgerblue;
+            color: #fff;
+            transition: 0.2s;
+
+            &:is(:hover, :focus-visible) {
+                cursor: pointer;
+                background-color: #065099;
+            }
+        }
+
+        .user {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            transition: 0.2s;
+            border-radius: 50%;
+            padding: 0;
+            border: none;
+            background-color: var(--bg-tertiary);
+            box-shadow: 0 0 0 1px #fff3;
+
+            &:is(:hover, :focus-visible) {
+                cursor: pointer;
+                box-shadow: 0 0 0 4px #fff7;
+            }
+        }
     }
 }

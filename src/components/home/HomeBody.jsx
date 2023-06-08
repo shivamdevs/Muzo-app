@@ -7,9 +7,9 @@ function HomeBody() {
     const { contentHome } = useContext(AppContext);
     return (
         <div className="homebody">
-            {/* <HomeList title="Trending Today" data={[...(contentHome?.trending?.songs || []), ...(contentHome?.trending?.albums || [])]} /> */}
-            <HomeList title="New Albums" data={contentHome?.albums} path="/albums" />
-            <HomeList title="Playlists" data={contentHome?.playlists} path="/playlists" />
+            <HomeList title="Trending Today" data={contentHome?.trending?.songs} dataAdd={contentHome?.trending?.albums} path="/trending" />
+            <HomeList title="New Releases" data={contentHome?.albums} path="/releases" />
+            <HomeList title="Hit Playlists" data={contentHome?.playlists} path="/playlists" />
             <HomeList title="Top Charts" data={contentHome?.charts} path="/charts" />
         </div>
     );

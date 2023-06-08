@@ -31,7 +31,8 @@
         position: relative;
         border-radius: 5px;
         height: 5px;
-        background-color: var(--bg-tertiary);
+        min-width: 50px;
+        background-color: #0001;
 
         .buffer {
             position: absolute;
@@ -40,7 +41,7 @@
             max-width: 100%;
             border-radius: 5px;
             width: var(--buffered);
-            background-color: #fff2;
+            background-color: #fff4;
             transition: 0.3s;
         }
 
@@ -132,6 +133,7 @@
 
         .switch {
             width: 40px;
+            min-width: 40px;
             border-radius: 50%;
             border: none;
             background-color: #fff1;
@@ -183,7 +185,9 @@
     }
 }
 
-
+div:has(>.oasismenu) {
+    z-index: 9998 !important;
+}
 .oasismenu {
     // background-color: var(--bg-primary);
     // max-height: calc(100vb - 120px);
@@ -253,13 +257,17 @@
     padding: 0;
 
     .player-queue {
-        height: calc(100vb - 150px);
+        height: calc(100dvh - 150px);
     }
 }
 
 .player-download-sync {
     min-width: 335px;
     min-height: 210px;
+
+    .failed {
+        color: rgb(255, 17, 0);
+    }
 
     .loading {
         display: flex;

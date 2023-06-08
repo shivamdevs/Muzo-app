@@ -1,0 +1,25 @@
+#search {
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+
+    .title {
+        display: block;
+        font-weight: 600;
+        font-size: 23px;
+        text-transform: capitalize;
+
+        svg {
+            margin-bottom: -3px;
+            margin-left: 20px;
+        }
+    }
+
+    .query {
+        font-size: 13px;
+        color: #727888;
+        margin-block: 10px;
+        white-space: break-spaces;
+    }
+}

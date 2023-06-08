@@ -1,8 +1,14 @@
+#root {
+    width: 100%;
+    overflow-y: auto;
+}
+
 #main {
     display: flex;
     flex-direction: column;
-    min-height: 100vb;
-    height: 100vb;
-    max-height: 100vb;
+    min-height: 100dvh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-width: 964px;
     overflow: hidden;
 }

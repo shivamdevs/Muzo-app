@@ -8,10 +8,12 @@ const AppData = {
     },
 
     storage: "muzo:settings",
+    bucket: "muzo:saved:songs",
 
     api: "https://saavn.me",
     apiPath: {
         home: "https://saavn.me/modules?language=hindi,english",
+        search: "https://saavn.me/search/all?query=",
     },
 };
 

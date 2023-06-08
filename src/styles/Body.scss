@@ -2,13 +2,24 @@
     flex: 1;
     width: 100%;
     overflow: hidden;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
     position: relative;
 
     .home-content {
-        width: 100%;
+        width: calc(100% - 250px);
         height: 100%;
         overflow: auto;
         transition: 0.4s;
+
+        &> :not(:is(#footer, .home-content)) {
+            z-index: 9997;
+        }
+
+        &> :is(.home-content, .pagination) {
+            min-height: 60vh;
+        }
     }
 
     .player-extension {

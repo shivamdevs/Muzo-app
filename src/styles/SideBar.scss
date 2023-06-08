@@ -1,0 +1,45 @@
+#sidebar {
+    width: 240px;
+    padding: 20px 0;
+
+    .title {
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 15px 25px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bs-link {
+        display: block;
+        font-weight: 600;
+        font-size: 15px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 10px;
+        padding: 5px 25px;
+        text-align: left;
+        background-color: transparent;
+        color: #727888;
+        border: none;
+        transition: 0.2s;
+        border-radius: 0 20px 20px 0;
+
+        &:is(:hover, :focus-visible) {
+            color: var(--text-primary);
+            cursor: pointer;
+            background-color: var(--bg-tertiary);
+        }
+    }
+
+    .add-play {
+        color: #727888;
+        font-size: 12px;
+        font-weight: 600;
+        padding-left: 25px;
+    }
+}

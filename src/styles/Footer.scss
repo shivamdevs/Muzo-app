@@ -1,0 +1,61 @@
+#footer {
+    margin-top: 40px;
+    background-color: color-mix(in srgb, #33005e 20%, #000 70%);
+    padding: 50px 20px;
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    align-items: flex-start;
+    color: #aaa;
+    flex-wrap: wrap;
+
+    .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .flexbox {
+        width: 100%;
+        max-width: 768px;
+        flex: 1;
+        margin-inline: auto;
+
+        a {
+            text-decoration: none;
+            color: #aaa;
+
+            &:is(:hover, :focus-visible) {
+                text-decoration: underline;
+                color: #fff;
+            }
+        }
+
+        .navbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 20px;
+
+            .nav {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+
+        .api {
+            text-align: center;
+            margin-block: 80px 20px;
+        }
+
+        .copyright {
+            color: #727888;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+    }
+}

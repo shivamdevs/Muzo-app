@@ -1,4 +1,3 @@
-
 .homebody {
     .home-list {
         margin-block: 20px;
@@ -12,6 +11,7 @@
             .title {
                 font-weight: 700;
                 font-size: 20px;
+                padding-inline: 10px;
             }
 
             .show-all {
@@ -48,102 +48,15 @@
 
             .flow {
                 display: flex;
-
-                .item {
-                    display: block;
-                    width: 200px;
-                    min-width: 200px;
-                    height: 240px;
-                    padding: 8px;
-                    position: relative;
-
-                    .loader {
-                        position: absolute;
-                        inset: 8px;
-                        max-width: calc(100% - 16px);
-                        max-height: calc(100% - 16px);
-                        border-radius: 10px;
-                    }
-
-
-                    .wrap {
-                        width: 100%;
-                        height: 100%;
-                        position: relative;
-                        border-radius: 10px;
-                        background-position: center;
-                        background-size: cover;
-                        background-repeat: no-repeat;
-                        overflow: hidden;
-                        display: flex;
-                        flex-direction: column;
-                        transition: 0.1s;
-                        outline: none;
-                        border: none;
-                        padding: 0;
-
-                        .opts {
-                            flex: 1;
-                            justify-content: center;
-                            align-items: center;
-                            flex-wrap: nowrap;
-                            display: flex;
-                            width: 100%;
-                            transition: 0.2s;
-                            opacity: 0;
-                            visibility: hidden;
-
-                            .play {
-                                width: 50px;
-                                height: 50px;
-                                margin-top: 50px;
-                                border-radius: 50%;
-                                background-image: linear-gradient(135deg, #700f2b, #400a5c);
-                                transition: 0.2s;
-
-                                &:hover {
-                                    cursor: pointer;
-                                    background-image: linear-gradient(135deg, #fa1228, #5a00d1);
-                                }
-                            }
-                        }
-
-                        .metadata {
-                            background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9));
-                            padding: 10px;
-                            z-index: 1;
-                            width: 100%;
-                            text-align: left;
-                            position: relative;
-
-                            .name,
-                            .artist {
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                white-space: nowrap;
-                            }
-
-                            .name {
-                                font-weight: 600;
-                            }
-
-                            .artist {
-                                color: var(--text-secondary);
-                                font-size: 13px;
-                            }
-                        }
-
-                        &:is(:hover, :focus-visible) {
-                            box-shadow: 0 0 0 6px var(--shadow-color);
-
-                            .opts {
-                                visibility: visible;
-                                opacity: 1;
-                            }
-                        }
-                    }
-                }
             }
         }
+
+        .grid {
+            display: grid;
+            width: 100%;
+            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, 160px);
+        }
+
     }
 }

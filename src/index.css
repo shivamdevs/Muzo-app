@@ -43,3 +43,12 @@
     background-size: 200% 100%;
     animation: skeleton-loader 1.5s infinite linear;
 }
+
+.tippy-box[data-theme~='tippy-theme'] {
+    background-color: #000;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 1px solid #fff3;
+    box-shadow: 0 0 10px 5px #0007;
+    font-weight: 600;
+}

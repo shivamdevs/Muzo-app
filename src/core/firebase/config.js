@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -17,10 +17,15 @@ const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp);
 const firebaseFirestore = getFirestore(firebaseApp);
 
+const firebaseAuthLogout = async () => {
+    await signOut(firebaseAuth);
+};
+
 const firebase = {
     app: firebaseApp,
     auth: firebaseAuth,
     store: firebaseFirestore,
+    logout: firebaseAuthLogout,
 };
 export default firebase;
 
@@ -28,4 +33,5 @@ export {
     firebaseApp,
     firebaseAuth,
     firebaseFirestore,
+    firebaseAuthLogout,
 };

@@ -6,6 +6,7 @@ import parseTime from '../../core/app/parseTime';
 import { GiPlayButton } from 'react-icons/gi';
 import SongPlaying from '../icons/SongPlaying';
 import { VscClearAll } from 'react-icons/vsc';
+import Tippy from '@tippyjs/react';
 
 function PlayerQueue({ playerList, playerIndex, playerElement, updatePlayerList, updatePlayerIndex, playerExtended, setPlayerExtended }) {
 
@@ -16,13 +17,15 @@ function PlayerQueue({ playerList, playerIndex, playerElement, updatePlayerList,
         <div className="player-queue">
             <header>
                 <div className="title">Queue</div>
-                <button type="button" onClick={() => {
-                    updatePlayerList(null);
-                    playerElement.pause();
-                    updatePlayerIndex(-1);
-                    playerElement.src = null;
-                    setPlayerExtended(false);
-                }}><VscClearAll /></button>
+                <Tippy placement="left" content="Clear queue">
+                    <button type="button" onClick={() => {
+                        updatePlayerList(null);
+                        playerElement.pause();
+                        updatePlayerIndex(-1);
+                        playerElement.src = null;
+                        setPlayerExtended(false);
+                    }}><VscClearAll /></button>
+                </Tippy>
             </header>
             <div className="list">
                 {playerList.map((player, index) => <QueueItem
@@ -68,7 +71,9 @@ function QueueItem({ song, count, playing, index, playerExtended, playerElement,
             <div className="count-play">
                 {playing ? <SongPlaying /> : <>
                     <span className="count">{count}</span>
-                    <span className="play"><GiPlayButton /></span>
+                    <Tippy content="Play" placement="right">
+                        <span className="play"><GiPlayButton /></span>
+                    </Tippy>
                 </>}
             </div>
             <img src={song.image.find(item => item.quality === "50x50").link} alt={convertHTMLEntities(song.name)} />
@@ -78,7 +83,7 @@ function QueueItem({ song, count, playing, index, playerExtended, playerElement,
                     <div className="artist">{convertHTMLEntities(song.primaryArtists)}</div>
                 </div>
             </div>
-            {!playing && <button type="button" className="clear" onClick={deleteSong}><MdOutlineClear /></button>}
+            {!playing && <Tippy content="Remove" placement="left"><button type="button" className="clear" onClick={deleteSong}><MdOutlineClear /></button></Tippy>}
             <div className="opts">
                 <span className="time">{parseTime(parseInt(song.duration))}</span>
             </div>
