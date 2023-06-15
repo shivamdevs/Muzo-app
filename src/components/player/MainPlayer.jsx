@@ -18,6 +18,8 @@ import PlayerQueue from './PlayerQueue';
 import getFileContentSize from '../../core/app/getFileContentSize';
 import downloadSongFromLink from '../../core/app/downloadSongFromLink';
 import Tippy from '@tippyjs/react';
+import AddRemoveFavorite from '../user/AddRemoveFavorite';
+import { useNavigate } from 'react-router-dom';
 
 
 function MainPlayer() {
@@ -25,7 +27,7 @@ function MainPlayer() {
 
     const [playerIsEnded, setPlayerIsEnded] = useState(false);
 
-    const { user, userLoading, playerSong, playerList, playerIndex, updatePlayerSong, updatePlayerList, updatePlayerIndex, setPlayerElement, settings, updateSettings, playerExtended, setPlayerExtended } = useContext(AppContext);
+    const { user, userLoading, playerSong, playerList, playerIndex, updatePlayerSong, updatePlayerList, updatePlayerIndex, setPlayerElement, settings, updateSettings, playerExtended, setPlayerExtended, userCDbFavorites } = useContext(AppContext);
 
     const [duration, setDuration] = useState(0);
     const [buffering, setBuffering] = useState(false);
@@ -33,6 +35,8 @@ function MainPlayer() {
     const [bufferedPercentage, setBufferedPercentage] = useState(0);
     const [playerDownloadLink, setPlayerDownloadLink] = useState(null);
     const [seekDefaultStatePlaying, setSeekDefaultStatePlaying] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!userLoading && playerSong) {
@@ -148,12 +152,16 @@ function MainPlayer() {
                 </div>
                 <Tippy content="Duration"><div className="times">{parseTime(duration)}</div></Tippy>
             </div>
-            <div className="flexbox">
+            <div className="flexBox">
                 <div className="thumbnail">
-                    <div className="cover" style={{ backgroundImage: `url(${playerSong?.image.find(item => item.quality === "50x50").link})` }} />
+                    <div className="cover" style={{ backgroundImage: `url(${playerSong?.image.find(item => item.quality === "50x50").link})` }}>
+                        <AddRemoveFavorite song={playerSong} user={user} favorites={userCDbFavorites} className="switch" />
+                    </div>
                     <div className="metadata">
-                        <div className="name">{convertHTMLEntities(playerSong?.name)}</div>
-                        <div className="artist">{convertHTMLEntities(playerSong?.primaryArtists)}</div>
+                        <div className="meta-cover">
+                            <div className="name">{convertHTMLEntities(playerSong?.name)}</div>
+                            <div className="artist">{convertHTMLEntities(playerSong?.primaryArtists)}</div>
+                        </div>
                     </div>
                 </div>
                 <div className="controls">
@@ -166,95 +174,93 @@ function MainPlayer() {
                         <button type="button" className="switch state" disabled={(!playerList)} onClick={() => {
                             if (playerIsEnded) {
                                 console.log(1);
-                                playerList && updatePlayerSong(old => ({...old}));
+                                playerList && updatePlayerSong(old => ({ ...old }));
                             } else {
-                                if (player.current.paused) try {player.current.play()} catch (error) {console.error(error)} else player.current.pause();
+                                if (player.current.paused) try { player.current.play() } catch (error) { console.error(error) } else player.current.pause();
                             }
                         }}>
-                        {buffering && <LoadSVG size="100%" color="#fff7" duration={2000} />}
-                        {playerIsEnded ? <MdReplay /> : player.current?.paused ? <GiPlayButton /> : <GiPauseButton />}
-                    </button>
-                </Tippy>
-                <Tippy content="Next">
-                    <button type="button" className="switch" disabled={(!playerList || !playerList[playerIndex + 1])} onClick={() => {
-                        if (playerList && playerList[playerIndex + 1]) { player.current.pause(); updatePlayerIndex(old => ++old); }
-                    }}><GiNextButton /></button>
-                </Tippy>
-            </div>
-            <div className="opts">
-                {user && <>
+                            {buffering && <LoadSVG size="100%" color="#fff7" duration={2000} />}
+                            {playerIsEnded ? <MdReplay /> : player.current?.paused ? <GiPlayButton /> : <GiPauseButton />}
+                        </button>
+                    </Tippy>
+                    <Tippy content="Next">
+                        <button type="button" className="switch" disabled={(!playerList || !playerList[playerIndex + 1])} onClick={() => {
+                            if (playerList && playerList[playerIndex + 1]) { player.current.pause(); updatePlayerIndex(old => ++old); }
+                        }}><GiNextButton /></button>
+                    </Tippy>
+                </div>
+                <div className="opts">
                     <OasisMenuTrigger name="player-download" trigger="click" toggle placement="top" shiftDistance={50}>
                         <Tippy content="Download">
-                            <button type="button" className="switch queue" disabled={(!playerList)}><HiOutlineDownload /></button>
+                            <button type="button" className="switch queue" disabled={!(user && playerList)}><HiOutlineDownload /></button>
                         </Tippy>
                     </OasisMenuTrigger>
-                    <OasisMenu name="player-download" theme="space" onOpen={createDownloadLinks} onClose={() => setPlayerDownloadLink(null)} className="player-download-sync">
-                        <div className="oasisTopic">Download this song</div>
-                        <OasisMenuBreak />
-                        {playerDownloadLink === false && <div className="oasisTopic failed">Failed to create download links!</div>}
-                        {playerDownloadLink === null && <div className="loading">
-                            <div className="oasisTopic" style={{ marginBottom: "2em" }}>Creating download links...</div>
-                            <LoadSVG size={40} />
-                        </div>}
-                        {playerDownloadLink?.map(down => <OasisMenuItem key={down.key} onClick={() => downloadSongFromLink(down.link, down.download)} content={down.name} after={down.after} icon={<MdOutlineHighQuality />} statusIcon={<MdOutlineFileDownload />} />)}
+                    {user && <>
+                        <OasisMenu name="player-download" theme="space" onOpen={createDownloadLinks} onClose={() => setPlayerDownloadLink(null)} className="player-download-sync">
+                            <div className="oasisTopic">Download this song</div>
+                            <OasisMenuBreak />
+                            {playerDownloadLink === false && <div className="oasisTopic failed">Failed to create download links!</div>}
+                            {playerDownloadLink === null && <div className="loading">
+                                <div className="oasisTopic" style={{ marginBottom: "2em" }}>Creating download links...</div>
+                                <LoadSVG size={40} />
+                            </div>}
+                            {playerDownloadLink?.map(down => <OasisMenuItem key={down.key} onClick={() => downloadSongFromLink(down.link, down.download)} content={down.name} after={down.after} icon={<MdOutlineHighQuality />} statusIcon={<MdOutlineFileDownload />} />)}
+                        </OasisMenu>
+                    </>}
+                    <Tippy content="Shuffle">
+                        <button type="button" className="switch shuffle" disabled={(!playerList)} onClick={() => {
+                            updatePlayerList(old => shuffleArray([...old]));
+                            player.current.pause();
+                            updatePlayerIndex(0);
+                        }}><ImShuffle /></button>
+                    </Tippy>
+                    <OasisMenuTrigger name="player-queue" trigger="click" toggle placement="top" shiftDistance={50}>
+                        <Tippy content="Queue">
+                            <button type="button" className="switch queue" disabled={(!playerList)}><MdQueueMusic /></button>
+                        </Tippy>
+                    </OasisMenuTrigger>
+                    <OasisMenu name="player-queue" theme="space" className="player-queue-oasis">
+                        <PlayerQueue playerList={playerList} playerIndex={playerIndex} playerElement={player.current} user={user} userCDbFavorites={userCDbFavorites} updatePlayerList={updatePlayerList} updatePlayerIndex={updatePlayerIndex} setPlayerExtended={setPlayerExtended} />
                     </OasisMenu>
-                </>}
-                <Tippy content="Shuffle">
-                    <button type="button" className="switch shuffle" disabled={(!playerList)} onClick={() => {
-                        updatePlayerList(old => shuffleArray([...old]));
-                        player.current.pause();
-                        updatePlayerIndex(0);
-                    }}><ImShuffle /></button>
-                </Tippy>
-                <OasisMenuTrigger name="player-queue" trigger="click" toggle placement="top" shiftDistance={50}>
-                    <Tippy content="Queue">
-                        <button type="button" className="switch queue" disabled={(!playerList)}><MdQueueMusic /></button>
+                    <Tippy content={settings.muted ? "Unmute" : "Mute"}>
+                        <button type="button" className="switch" disabled={(!playerList)} onClick={() => updateSettings("muted", muted => !muted)}>{settings.muted ? <ImVolumeMute2 /> : <ImVolumeMedium />}</button>
                     </Tippy>
-                </OasisMenuTrigger>
-                <OasisMenu name="player-queue" theme="space" className="player-queue-oasis">
-                    <PlayerQueue playerList={playerList} playerIndex={playerIndex} playerElement={player.current} updatePlayerList={updatePlayerList} updatePlayerIndex={updatePlayerIndex} setPlayerExtended={setPlayerExtended} />
-                </OasisMenu>
-                <Tippy content={settings.muted ? "Unmute" : "Mute"}>
-                    <button type="button" className="switch" disabled={(!playerList)} onClick={() => updateSettings("muted", muted => !muted)}>{settings.muted ? <ImVolumeMute2 /> : <ImVolumeMedium />}</button>
-                </Tippy>
-                <div className="seeker volume">
-                    <input
-                        type="range"
-                        min={0}
-                        max={1}
-                        step={0.1}
-                        value={settings.volume}
-                        disabled={(!playerList || settings.muted)}
-                        onChange={({ target }) => {
-                            updateSettings("volume", target.value);
-                        }}
-                        style={{ "--progress": `${(settings.volume * 100).toFixed(1)}%` }}
-                    />
+                    <div className="seeker volume">
+                        <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            value={settings.volume}
+                            disabled={(!playerList || settings.muted)}
+                            onChange={({ target }) => {
+                                updateSettings("volume", target.value);
+                            }}
+                            style={{ "--progress": `${(settings.volume * 100).toFixed(1)}%` }}
+                        />
+                    </div>
+                    <OasisMenuTrigger name="player-options" trigger="click" toggle placement="top-right" shiftDistance={50}>
+                        <Tippy content="More">
+                            <button type="button" className="switch" disabled={(!playerList)}><SlOptions /></button>
+                        </Tippy>
+                    </OasisMenuTrigger>
+                    <OasisMenu name="player-options" theme="space">
+                        <OasisMenuItem onClick={() => navigate(`/songs/${playerSong?.id}`)} content="Song info" icon={<BsInfoCircle />} />
+                        <OasisMenuBreak />
+                        <div className="oasisTopic">Audio Quality</div>
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} disabled={!user} onClick={() => updateAudioQuality(4)} checked={settings.quality === 4} content="Extreme" after="320kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} disabled={!user} onClick={() => updateAudioQuality(3)} checked={settings.quality === 3} content="Best" after="160kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(2)} checked={settings.quality === 2} content="Good" after="96kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(1)} checked={settings.quality === 1} content="Fair" after="48kbps" />
+                        <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(0)} checked={settings.quality === 0} content="Low" after="12kbps" />
+                    </OasisMenu>
+                    <Tippy content={playerExtended ? "Exit fullscreen" : "Fullscreen"}>
+                        <button type="button" className="switch" disabled={(!playerList)} onClick={() => setPlayerExtended(ext => !ext)}>
+                            {playerExtended ? <FaCompressAlt /> : <FaExpandAlt />}
+                        </button>
+                    </Tippy>
                 </div>
-                <OasisMenuTrigger name="player-options" trigger="click" toggle placement="top-right" shiftDistance={50}>
-                    <Tippy content="More">
-                        <button type="button" className="switch" disabled={(!playerList)}><SlOptions /></button>
-                    </Tippy>
-                </OasisMenuTrigger>
-                <OasisMenu name="player-options" theme="space">
-                    <div className="oasisTopic">Login for unlock & more</div>
-                    <OasisMenuBreak />
-                    <OasisMenuItem content="Song info" icon={<BsInfoCircle />} />
-                    <OasisMenuBreak />
-                    <div className="oasisTopic">Audio Quality</div>
-                    <OasisMenuItem icon={<MdOutlineHighQuality />} disabled={!user} onClick={() => updateAudioQuality(4)} checked={settings.quality === 4} content="Extreme" after="320kbps" />
-                    <OasisMenuItem icon={<MdOutlineHighQuality />} disabled={!user} onClick={() => updateAudioQuality(3)} checked={settings.quality === 3} content="Best" after="160kbps" />
-                    <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(2)} checked={settings.quality === 2} content="Good" after="96kbps" />
-                    <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(1)} checked={settings.quality === 1} content="Fair" after="48kbps" />
-                    <OasisMenuItem icon={<MdOutlineHighQuality />} onClick={() => updateAudioQuality(0)} checked={settings.quality === 0} content="Low" after="12kbps" />
-                </OasisMenu>
-                <Tippy content={playerExtended ? "Exit fullscreen" : "Fullscreen"}>
-                    <button type="button" className="switch" disabled={(!playerList)} onClick={() => setPlayerExtended(ext => !ext)}>
-                        {playerExtended ? <FaCompressAlt /> : <FaExpandAlt />}
-                    </button>
-                </Tippy>
             </div>
-        </div>
         </main >
     );
 }

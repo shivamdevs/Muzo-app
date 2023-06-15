@@ -5,7 +5,7 @@ import PlayerQueue from './PlayerQueue';
 
 function PlayerExtension() {
 
-    const { playerSong, playerList, playerIndex, playerElement, updatePlayerList, updatePlayerIndex, setPlayerExtended } = useContext(AppContext);
+    const { user, playerSong, playerList, playerIndex, playerElement, updatePlayerList, updatePlayerIndex, setPlayerExtended, userCDbFavorites } = useContext(AppContext);
 
     return (
         <div className="player-extension">
@@ -17,7 +17,7 @@ function PlayerExtension() {
                 </div>
                 <div className="queuer">
                     <div className="queue-box">
-                        <PlayerQueue playerList={playerList} playerIndex={playerIndex} playerElement={playerElement} updatePlayerList={updatePlayerList} updatePlayerIndex={updatePlayerIndex} setPlayerExtended={setPlayerExtended} />
+                        <PlayerQueue playerList={playerList} playerIndex={playerIndex} user={user} userCDbFavorites={userCDbFavorites} playerElement={playerElement} updatePlayerList={updatePlayerList} updatePlayerIndex={updatePlayerIndex} setPlayerExtended={setPlayerExtended} />
                     </div>
                 </div>
             </>}

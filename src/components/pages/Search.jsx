@@ -8,10 +8,14 @@ import LoadSVG from 'react-loadsvg';
 import ShowAllSongs from '../collection/ShowAllSongs';
 
 function Search() {
-    const { playerQuerySearch } = useContext(AppContext);
+    const { playerQuerySearch, playerExtended, setPlayerExtended } = useContext(AppContext);
 
     const [searchResults, setSearchResults] = useState(null);
     const [searchLoading, setSearchLoading] = useState(false);
+
+    useEffect(() => {
+        if (playerExtended) setPlayerExtended(false);
+    }, [playerExtended, setPlayerExtended]);
 
     useEffect(() => {
         if (!playerQuerySearch) return setSearchResults(null);

@@ -17,8 +17,8 @@
             z-index: 9997;
         }
 
-        &> :is(.home-content, .pagination) {
-            min-height: 60vh;
+        &> :is(.homebody, .pagination) {
+            min-height: 75vh;
         }
     }
 

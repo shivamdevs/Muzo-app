@@ -9,10 +9,14 @@ import addToLibrary, { deleteFromLibrary } from '../../core/firebase/addToLibrar
 import SongPlaying from '../icons/SongPlaying';
 import { GiPlayButton } from 'react-icons/gi';
 import classNames from 'classnames';
+import parseTime from '../../core/app/parseTime';
+import { useNavigate } from 'react-router-dom';
 
 function PreviewSong({ data = null, count, favorite }) {
 
     const { user, updatePlayerList, updatePlayerIndex, playerElement, playerSong } = useContext(AppContext);
+
+    const navigate = useNavigate();
 
     if (!data) return (<div className="collection-item as-list"><div className="loader skeleton-loader" /></div>);
 
@@ -71,12 +75,12 @@ function PreviewSong({ data = null, count, favorite }) {
 
     return (
         <div className="collection-item as-list" data-id={data.id}>
-            <button type="button" className='listbox' onClick={addSong}>
+            <button type="button" className='list-box' onClick={() => navigate(`/songs/${data?.id}`)}>
                 {count && <div className="count-play">
                     {playing ? <SongPlaying /> : <>
                         <span className="count">{count}</span>
-                        <Tippy content="Play" placement="right">
-                            <span className="play"><GiPlayButton /></span>
+                        <Tippy content="Play">
+                            <span className="play" onClick={addSong}><GiPlayButton /></span>
                         </Tippy>
                     </>}
                 </div>}
@@ -91,8 +95,9 @@ function PreviewSong({ data = null, count, favorite }) {
                         <div className="artist">{artist}</div>
                     </div>
                 </div>
-                <Tippy content={favorite ? "Remove from Favorites" : "Add to favorite"} placement="left"><div className="button" onClick={(favorite ? removeSongFromLibrary : addSongToLibrary)}>{favorite ? <MdFavorite /> : <MdFavoriteBorder />}</div></Tippy>
-                <Tippy content="Add to queue" placement="left"><div className={classNames("button", { hide: playing })} onClick={addSongToQueue}><MdQueueMusic /></div></Tippy>
+                <span className="time">{parseTime(parseInt(data.duration))}</span>
+                <Tippy content={favorite ? "Remove from Favorites" : "Add to favorite"}><div className="button" onClick={(favorite ? removeSongFromLibrary : addSongToLibrary)}>{favorite ? <MdFavorite /> : <MdFavoriteBorder />}</div></Tippy>
+                <Tippy content="Add to queue"><div className={classNames("button", { hide: playing })} onClick={addSongToQueue}><MdQueueMusic /></div></Tippy>
             </button>
         </div>
     );

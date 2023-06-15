@@ -9,3 +9,104 @@
         font-size: 24px;
     }
 }
+
+
+.songCover {
+    padding: 30px 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+
+    .image {
+        border-radius: 20px;
+        box-shadow: 5px 5px 10px 5px #0005;
+        background-color: var(--bg-secondary);
+        width: 200px;
+        height: 200px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+
+        .play {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-image: linear-gradient(135deg, #700f2b, #400a5c);
+            transition: 0.2s;
+            border: 1px solid #fff7;
+            margin-bottom: -10px;
+            margin-right: -10px;
+
+            &:hover {
+                border-color: #fffc;
+                cursor: pointer;
+                background-image: linear-gradient(135deg, #fa1228, #5a00d1);
+            }
+        }
+    }
+
+    .metadata {
+        flex: 1;
+
+        &>* {
+            width: 100%;
+        }
+
+        .name {
+            font-weight: bold;
+            margin-bottom: 1em;
+            font-size: 23px;
+        }
+
+        .artist {
+            color: #aaa;
+            font-weight: 600;
+            margin-bottom: 1em;
+            font-size: 18px;
+        }
+
+        .blur {
+            color: #727888;
+
+            span {
+                color: #999;
+                font-weight: 600;
+            }
+        }
+
+        .btn {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-block: 20px;
+            
+            button {
+                display: inline-flex;
+                flex-wrap: nowrap;
+                gap: 10px;
+                align-items: center;
+                justify-content: space-between;
+                padding: 6px 20px;
+                border-radius: 40px;
+                border: 1px solid #fff3;
+                background-color: transparent;
+                transition: 0.2s;
+
+                &:disabled {
+                    background-color: #0005;
+                }
+
+                &:not(:disabled):is(:hover,:focus-visible) {
+                    background-color: #fff2;
+                    border-color: #fff5;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

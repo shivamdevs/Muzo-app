@@ -14,10 +14,13 @@ import getApiPathForQuickAction from '../../core/app/getApiPathForQuickAction';
 import { toast } from 'react-hot-toast';
 import addToLibrary from '../../core/firebase/addToLibrary';
 import removeDuplicateObjectsById from '../../core/app/removeDuplicateObjectsById';
+import { useNavigate } from 'react-router-dom';
 
 function PreviewCollection({ data = null }) {
 
     const { user, updatePlayerList, updatePlayerIndex, playerElement } = useContext(AppContext);
+
+    const navigate = useNavigate();
 
     if (data?.type === 'artist') return null;
 
@@ -92,7 +95,7 @@ function PreviewCollection({ data = null }) {
             <div className="loader skeleton-loader">
                 <img src={image} alt={name} />
             </div>
-            <button type="button" className="wrap">
+            <button type="button" className="wrap" onClick={() => navigate(`/${getApiPathForQuickAction(data.type)}/${data.id}`)}>
                 <div className="opts">
                     <div className="options">
                         <Tippy content="Add to queue">

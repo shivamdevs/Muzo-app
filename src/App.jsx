@@ -120,7 +120,7 @@ function App() {
         if (window.localStorage && playerSong && playerElement) {
             const player = playerElement;
             const autoTimeLogger = () => {
-                if (playerList) {
+                if (playerList && playerList?.length > 0) {
                     const bucket = {
                         songs: playerList.map(song => song.id),
                         song: [
@@ -135,6 +135,7 @@ function App() {
                 }
             };
             player.addEventListener('timeupdate', autoTimeLogger);
+            autoTimeLogger();
 
             return () => player.removeEventListener('timeupdate', autoTimeLogger);
         }
@@ -209,12 +210,15 @@ function HookUserData({ user, playlist, favorites }) {
                         favF && newFav.push(favF);
                     }
                     favorites(newFav);
+
                 }).catch((err) => {
                     console.error(err);
+
                 });
             }
         } else {
             favorites(null);
+
         }
     }, [favorites]);
 

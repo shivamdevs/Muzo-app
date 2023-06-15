@@ -129,15 +129,24 @@
 
     &.as-list {
         width: 100%;
-        min-height: 80px;
-        padding: 4px 0;
+        min-height: 70px;
+        padding: 0;
 
-        .listbox {
+        &:first-child .list-box {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        &:last-child .list-box {
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .list-box {
             width: 100%;
             text-align: left;
             height: 100%;
             position: relative;
-            border-radius: 6px;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -145,7 +154,7 @@
             outline: none;
             border: none;
             padding: 0 20px;
-            gap: 10px;
+            gap: 5px;
             background-color: #0005;
 
             .count-play {
@@ -217,6 +226,12 @@
                 }
             }
 
+            .time {
+                color: #727888;
+                font-size: 12px;
+                margin-right: 20px;
+            }
+
             .button {
                 width: 2em;
                 height: 2em;
@@ -242,8 +257,9 @@
             }
 
             &:is(:hover, :focus-visible) {
-                box-shadow: 0 0 0 6px var(--shadow-color);
+                // box-shadow: 0 0 0 5px var(--shadow-color);
                 background-color: var(--bg-secondary);
+                cursor: pointer;
 
                 .opts {
                     background-color: #0005;

@@ -78,7 +78,7 @@
         }
     }
 
-    .flexbox {
+    .flexBox {
         width: 100%;
         display: flex;
         flex-wrap: nowrap;
@@ -88,12 +88,14 @@
         padding-inline: 10px;
 
         &>* {
-            flex: 1;
             display: inline-flex;
             flex-wrap: nowrap;
             align-items: center;
-            max-width: calc(calc(100% - 40px) / 3);
             gap: 20px;
+
+            &:not(.controls) {
+                flex: 1;
+            }
         }
 
         .thumbnail {
@@ -107,10 +109,42 @@
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+
+                .switch {
+                    background-color: #0007;
+
+                    &:disabled {
+                            opacity: 0;
+                            visibility: hidden;
+                        }
+
+                        &:not(:disabled):is(:hover, :focus-visible) {
+                            background-color: #000a;
+                            backdrop-filter: blur(4px);
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 0;
+                            cursor: pointer;
+                        }
+                }
             }
 
             .metadata {
                 width: calc(100% - 70px);
+                align-self: stretch;
+                position: relative;
+
+                .meta-cover {
+                    position: absolute;
+                    top: 50%;
+                    translate: 0 -50%;
+                    left: 0;
+                    right: 0;
+                }
 
                 .name,
                 .artist {
@@ -136,7 +170,7 @@
             min-width: 40px;
             border-radius: 50%;
             border: none;
-            background-color: #fff1;
+            background-color: transparent;
             height: 40px;
             padding: 0;
             font-size: 20px;
@@ -158,6 +192,10 @@
         .controls {
             justify-content: center;
 
+            .switch:not(:disabled) {
+                background-color: #fff1;
+            }
+
             .state {
                 scale: 1.25;
                 position: relative;
@@ -173,10 +211,6 @@
             justify-content: flex-end;
             gap: 10px;
 
-            .switch {
-                background-color: transparent;
-            }
-
             .volume {
                 max-width: 100px;
             }
@@ -188,6 +222,7 @@
 div:has(>.oasismenu) {
     z-index: 9998 !important;
 }
+
 .oasismenu {
     // background-color: var(--bg-primary);
     // max-height: calc(100vb - 120px);

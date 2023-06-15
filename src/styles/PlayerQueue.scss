@@ -16,7 +16,11 @@
         display: inline-flex;
         justify-content: center;
         align-items: center;
-        font-size: 0;
+        font-size: 20px;
+
+        &:disabled {
+            background-color: #0004;
+        }
 
         &:not(:disabled):is(:hover, :focus-visible) {
             background-color: #fff2;
@@ -29,8 +33,12 @@
         background-color: #2e2544;
         border-bottom: 1px solid #fff2;
         display: flex;
-        justify-content: space-between;
+        gap: 10px;
         align-items: center;
+
+        div {
+            flex: 1;
+        }
 
         button {
             font-size: 20px;
@@ -122,6 +130,10 @@
                 color: #727888;
                 font-size: 12px;
                 font-weight: 600;
+            }
+
+            .clear {
+                font-size: 0;
             }
 
             &:hover {
