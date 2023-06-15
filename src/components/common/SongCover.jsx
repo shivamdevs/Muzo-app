@@ -7,11 +7,11 @@ import convertHTMLEntities from '../../core/app/convertHTMLEntities';
 import AppContext from '../../core/app/AppContext';
 import { toast } from 'react-hot-toast';
 import removeDuplicateObjectsById from '../../core/app/removeDuplicateObjectsById';
-import addToLibrary from '../../core/firebase/addToLibrary';
-import { MdOutlinePlaylistAddCheck, MdQueueMusic } from 'react-icons/md';
+import addToLibrary, { deleteFromLibrary } from '../../core/firebase/addToLibrary';
+import { MdOutlinePlaylistAddCheck, MdOutlinePlaylistRemove, MdQueueMusic } from 'react-icons/md';
 import AddRemoveFavorite from '../user/AddRemoveFavorite';
 
-function SongCover({ cover, songs, asFav }) {
+function SongCover({ cover, songs, asFav, removeFav }) {
 
     const { user, playerElement, updatePlayerList, updatePlayerIndex, userCDbFavorites } = useContext(AppContext);
 
@@ -43,7 +43,19 @@ function SongCover({ cover, songs, asFav }) {
         console.log(newIds);
         await addToLibrary(user, { favorites: newIds });
         toast.success(`Added ${songs.length} song${songs.length > 1 ? "s" : ""} to library.`, { id: cached });
-    }
+    };
+
+    const removeSongFromLibrary = async (e) => {
+        e?.stopPropagation?.();
+        const cached = toast.loading('Removing song from library...');
+        await deleteFromLibrary(user, (response) => {
+            for (const song of songs) delete response?.favorites?.[song.id];
+            return response;
+        });
+        toast.success(`Removed ${songs.length} song${songs.length > 1 ? "s" : ""} from library.`, { id: cached });
+    };
+
+
     return (
         <section className='songCover'>
             <div className="image" style={{ backgroundImage: `url(${cover?.image})` }}>
@@ -66,7 +78,7 @@ function SongCover({ cover, songs, asFav }) {
                 {cover.follow && <div className="blur"><span>Followers:</span> {cover.follow}</div>}
                 <div className="btn">
                     <Tippy content="Add to Queue"><button type="button" onClick={addSongsToQueue}><MdQueueMusic /></button></Tippy>
-                    {asFav ? <AddRemoveFavorite song={asFav} user={user} favorites={userCDbFavorites} /> : <button type="button" disabled={!user} onClick={addSongsToLibrary}><MdOutlinePlaylistAddCheck /> Add to Library</button>}
+                    {asFav ? <AddRemoveFavorite song={asFav} user={user} favorites={userCDbFavorites} /> : <button type="button" disabled={!user} onClick={removeFav ? removeSongFromLibrary : addSongsToLibrary}> {removeFav ? <><MdOutlinePlaylistRemove /> Remove from Favorites</> : <><MdOutlinePlaylistAddCheck /> Add to Library</>}</button>}
                 </div>
             </div>}
         </section>

@@ -258,7 +258,7 @@
 
             &:is(:hover, :focus-visible) {
                 // box-shadow: 0 0 0 5px var(--shadow-color);
-                background-color: var(--bg-secondary);
+                background-color: #0008;
                 cursor: pointer;
 
                 .opts {

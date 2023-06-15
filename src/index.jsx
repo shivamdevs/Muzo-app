@@ -24,7 +24,7 @@ root.render(
             <OasisMenuBlock>
                 <App />
             </OasisMenuBlock>
-            <Toaster position="bottom-center" containerStyle={{ bottom: 116 }} />
+            <Toaster position="bottom-center" containerStyle={{ top: 76, bottom: 116 }} />
         </BrowserRouter>
     </React.StrictMode>
 );

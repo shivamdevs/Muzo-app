@@ -215,6 +215,8 @@ function HookUserData({ user, playlist, favorites }) {
                     console.error(err);
 
                 });
+            } else {
+                favorites([]);
             }
         } else {
             favorites(null);

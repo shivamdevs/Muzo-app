@@ -1,7 +1,8 @@
 #player {
     width: 100%;
     padding: 10px;
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-tertiary);
+    backdrop-filter: blur(16px);
 
     audio {
         display: none;
@@ -193,7 +194,11 @@
             justify-content: center;
 
             .switch:not(:disabled) {
-                background-color: #fff1;
+                background-color: #ffffff09;
+
+                &:not(:disabled):is(:hover, :focus-visible) {
+                        background-color: #fff2;
+                    }
             }
 
             .state {

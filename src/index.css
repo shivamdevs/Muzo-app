@@ -1,9 +1,9 @@
 :root {
-    --bg-primary: #191728;
+    --bg-primary: #191728dd;
     /* Primary background color */
-    --bg-secondary: #1e1c32;
+    --bg-secondary: #100e1cdd;
     /* Secondary background color */
-    --bg-tertiary: #312f44;
+    --bg-tertiary: #100f1fdd;
     /* Tertiary background color */
     --text-primary: #FFFFFF;
     /* Primary text color */
@@ -22,7 +22,7 @@
     --active-color: #FF5E3A;
     /* Text color when active */
 
-    
+
     --btn-color: #1e90ff;
 }
 
@@ -45,10 +45,30 @@
 }
 
 .tippy-box[data-theme~='tippy-theme'] {
-    background-color: #000;
+    background-color: #000000aa;
+    backdrop-filter: blur(16px);
     padding: 4px 8px;
     border-radius: 5px;
-    border: 1px solid #fff3;
+    border: 1px solid #fff1;
     box-shadow: 0 0 10px 5px #0007;
     font-weight: 600;
+}
+
+.oasismenu {
+    background-color: #0e101ecc;
+    backdrop-filter: blur(16px);
+
+    &> div:has(> .oasisitem) {
+        padding-block: 1px;
+    }
+    .oasisitem {
+        background-color: #ffffff06;
+
+        &:disabled {
+            background-color: #0004;
+        }
+        &:not(:disabled).oasishovered {
+            background-color: #fff1;
+        }
+    }
 }

@@ -66,26 +66,25 @@ function MainPlayer() {
         }
     }, [settings.muted, settings.volume]);
 
-    const createDownloadLinks = () => {
+    useEffect(() => {
+        const result = ["320", "160", "96", "48", "12"].map(byte => ({
+            key: `${byte}kbps`,
+            name: `Download ${byte}kbps`,
+            after: null,
+            link: null,
+            download: null
+        }));
         if (playerSong) {
-            (async () => {
-                const result = [];
-                for (const download of playerSong.downloadUrl) {
-                    const size = await getFileContentSize(download.link);
-                    result.push({
-                        key: download.quality,
-                        name: `Download ${download.quality}`,
-                        after: size,
-                        link: download.link,
-                        download: `[Muzo]-${convertHTMLEntities(playerSong.name)}-${download.quality}.${download.link.split(".").at(-1)}`,
-                    });
-                }
-                setPlayerDownloadLink(result.reverse());
-            })();
+            [...playerSong.downloadUrl].reverse().forEach(async (download, index) => {
+                result[index].download = `[Muzo]-${convertHTMLEntities(playerSong.name)}-${download.quality}.${download.link.split(".").at(-1)}`
+                result[index].link = download.link;
+                result[index].after = await getFileContentSize(download.link);
+            })
+            setPlayerDownloadLink(result);
         } else {
-            setPlayerDownloadLink(false);
+            setPlayerDownloadLink(null);
         }
-    };
+    }, [playerSong]);
 
     const updateAudioQuality = (quality) => {
         const current = player.current.currentTime;
@@ -195,18 +194,12 @@ function MainPlayer() {
                             <button type="button" className="switch queue" disabled={!(user && playerList)}><HiOutlineDownload /></button>
                         </Tippy>
                     </OasisMenuTrigger>
-                    {user && <>
-                        <OasisMenu name="player-download" theme="space" onOpen={createDownloadLinks} onClose={() => setPlayerDownloadLink(null)} className="player-download-sync">
-                            <div className="oasisTopic">Download this song</div>
-                            <OasisMenuBreak />
-                            {playerDownloadLink === false && <div className="oasisTopic failed">Failed to create download links!</div>}
-                            {playerDownloadLink === null && <div className="loading">
-                                <div className="oasisTopic" style={{ marginBottom: "2em" }}>Creating download links...</div>
-                                <LoadSVG size={40} />
-                            </div>}
-                            {playerDownloadLink?.map(down => <OasisMenuItem key={down.key} onClick={() => downloadSongFromLink(down.link, down.download)} content={down.name} after={down.after} icon={<MdOutlineHighQuality />} statusIcon={<MdOutlineFileDownload />} />)}
-                        </OasisMenu>
-                    </>}
+                    <OasisMenu name="player-download" theme="space" className="player-download-sync">
+                        <div className="oasisTopic">Download this song <span style={{ color: "#727888" }}>#{playerSong?.id}</span></div>
+                        <OasisMenuBreak />
+                        {!playerDownloadLink && <div className="oasisTopic failed">Failed to create download links!</div>}
+                        {playerDownloadLink?.map(down => <OasisMenuItem key={down.key} onClick={() => downloadSongFromLink(down.link, down.download)} content={down.name} after={down.after || <LoadSVG color='currentColor' size="1em" />} icon={<MdOutlineHighQuality />} statusIcon={<MdOutlineFileDownload />} />)}
+                    </OasisMenu>
                     <Tippy content="Shuffle">
                         <button type="button" className="switch shuffle" disabled={(!playerList)} onClick={() => {
                             updatePlayerList(old => shuffleArray([...old]));

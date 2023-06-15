@@ -4,12 +4,12 @@ import AppContext from '../../core/app/AppContext';
 import PreviewSong from './PreviewSong';
 import SongCover from './SongCover';
 
-function Pagination({ title, cover, value, children }) {
+function Pagination({ title, cover, value, children, removeFav }) {
     const { userCDbFavorites } = useContext(AppContext);
     return (
         <div className="pagination">
             {title && <div className="titled">{title}</div>}
-            {cover && <SongCover cover={cover} songs={value} />}
+            {cover && <SongCover cover={cover} songs={value} removeFav={removeFav} />}
             <section>{value !== undefined && (value || (new Array(10)).fill(null))?.map((item, index) => <PreviewSong
                 key={`${item?.id}${index}`}
                 count={`${index + 1}`.padStart(`${value?.length}`.length, '0')}

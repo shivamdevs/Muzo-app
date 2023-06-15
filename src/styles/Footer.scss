@@ -1,9 +1,10 @@
 #footer {
     margin-top: 40px;
-    background-color: color-mix(in srgb, #33005e 20%, #000 70%);
-    padding: 50px 20px;
+    background-color: color-mix(in srgb, #33005e77 20%, #0007 70%);
+    padding: 20px;
     display: flex;
     width: 100%;
+    border-top-left-radius: 50px;
     gap: 20px;
     align-items: flex-start;
     color: #aaa;

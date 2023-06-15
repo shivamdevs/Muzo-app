@@ -19,7 +19,7 @@ function CollectionPage({ type }) {
     }, [code, type]);
 
     return (
-        <Pagination title={collection ? type + " Info" : "Loading..."} cover={collection && {
+        <Pagination title={collection ? null : "Loading..."} cover={collection && {
             image: collection.image[2].link,
             name: collection.name,
             artist: collection.primaryArtists,

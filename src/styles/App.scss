@@ -1,6 +1,9 @@
 #root {
     width: 100%;
     overflow-y: auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #main {
@@ -11,4 +14,7 @@
     max-height: 100dvh;
     min-width: 964px;
     overflow: hidden;
+
+    backdrop-filter: blur(16px);
+    background-color: var(--bg-primary);
 }

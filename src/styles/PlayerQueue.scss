@@ -23,14 +23,14 @@
         }
 
         &:not(:disabled):is(:hover, :focus-visible) {
-            background-color: #fff2;
+            background-color: #fff1;
             cursor: pointer;
         }
     }
 
     header {
         padding: 10px 20px;
-        background-color: #2e2544;
+        background-color: #100a1f88;
         border-bottom: 1px solid #fff2;
         display: flex;
         gap: 10px;

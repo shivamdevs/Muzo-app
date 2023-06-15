@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 function PreviewSong({ data = null, count, favorite }) {
 
-    const { user, updatePlayerList, updatePlayerIndex, playerElement, playerSong } = useContext(AppContext);
+    const { user, updatePlayerList, playerList, updatePlayerIndex, playerElement, playerSong } = useContext(AppContext);
 
     const navigate = useNavigate();
 
@@ -27,15 +27,21 @@ function PreviewSong({ data = null, count, favorite }) {
 
     const addSong = async (e) => {
         e?.stopPropagation?.();
-        const cached = toast.loading('Adding song...');
+        if (playerSong?.id === data.id) {
+            return toast.error("This song is already playing.", { duration: 800 });
+        }
+        const cached = toast.loading('Playing song...');
         playerElement.pause();
         updatePlayerList([data]);
         updatePlayerIndex(0);
-        toast.success(`Added 1 song.`, { id: cached });
+        toast.success(`Playing 1 song.`, { id: cached });
     };
 
     const addSongToQueue = async (e) => {
         e?.stopPropagation?.();
+        if (playerList?.find(item => item.id === data.id)) {
+            return toast.error("This song is already in queue.", { duration: 800 });
+        }
         const cached = toast.loading('Adding songs to queue...');
         updatePlayerList(old => {
             const list = [...(old || [])];
@@ -46,7 +52,8 @@ function PreviewSong({ data = null, count, favorite }) {
         toast.success(`Added 1 song to queue.`, { id: cached });
     };
 
-    const addSongToLibrary = async () => {
+    const addSongToLibrary = async (e) => {
+        e?.stopPropagation?.();
         const cached = toast.loading('Adding song to library...');
         await addToLibrary(user, {
             favorites: {
@@ -73,18 +80,23 @@ function PreviewSong({ data = null, count, favorite }) {
         toast.success(`Removed 1 song from library.`, { id: cached });
     };
 
+    const songInfo = (e) => {
+        e?.stopPropagation?.();
+        navigate(`/songs/${data?.id}`);
+    };
+
     return (
         <div className="collection-item as-list" data-id={data.id}>
-            <button type="button" className='list-box' onClick={() => navigate(`/songs/${data?.id}`)}>
+            <button type="button" className='list-box' onClick={addSong}>
                 {count && <div className="count-play">
                     {playing ? <SongPlaying /> : <>
                         <span className="count">{count}</span>
                         <Tippy content="Play">
-                            <span className="play" onClick={addSong}><GiPlayButton /></span>
+                            <span className="play"><GiPlayButton /></span>
                         </Tippy>
                     </>}
                 </div>}
-                <div className="img-wrap">
+                <div className="img-wrap" onClick={songInfo}>
                     <div className="loader skeleton-loader">
                         <img src={image} alt={name} />
                     </div>

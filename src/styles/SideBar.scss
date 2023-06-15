@@ -29,10 +29,10 @@
         transition: 0.2s;
         border-radius: 0 20px 20px 0;
 
-        &:is(:hover, :focus-visible) {
+        &:is(.active, :hover, :focus-visible) {
             color: var(--text-primary);
             cursor: pointer;
-            background-color: var(--bg-tertiary);
+            background-color: var(--bg-secondary);
         }
     }
 
