@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
-import addToLibrary, { deleteFromLibrary } from '../../core/firebase/addToLibrary';
+import addToLibrary from '../../core/firebase/addToLibrary';
 import Tippy from '@tippyjs/react';
 import { deleteField } from 'firebase/firestore';
 
