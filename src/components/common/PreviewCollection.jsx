@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 function PreviewCollection({ data = null }) {
 
-    const { user, updatePlayerList, updatePlayerIndex, playerElement } = useContext(AppContext);
+    const { user, updatePlayerList, updatePlayerIndex, playerElement, addAsPlayListDialogBox, setPlaylistAutoAdded } = useContext(AppContext);
 
     const navigate = useNavigate();
 
@@ -82,9 +82,22 @@ function PreviewCollection({ data = null }) {
         if (songs.success) {
             const newIds = {};
             for (const item of songs.data) newIds[item.id] = Date.now();
-            console.log(newIds);
-            await addToLibrary(user, { favorites: newIds });
+            await addToLibrary(user, newIds);
             toast.success(`Added ${songs.length} song${songs.length > 1 ? "s" : ""} to library.`, { id: cached });
+        } else {
+            toast.error(`${songs.data}`, { id: cached });
+        }
+    }
+
+    const addSongsToPlaylist = async () => {
+        const cached = toast.loading('Getting songs...');
+        const songs = await getSongs();
+        if (songs.success) {
+            const newIds = {};
+            for (const item of songs.data) newIds[item.id] = Date.now();
+            setPlaylistAutoAdded({ name, songs: newIds });
+            addAsPlayListDialogBox?.showModal();
+            toast.dismiss(cached);
         } else {
             toast.error(`${songs.data}`, { id: cached });
         }
@@ -115,7 +128,7 @@ function PreviewCollection({ data = null }) {
                             <OasisMenuItem content="Play Now" icon={<MdOutlinePlaylistPlay />} onClick={addSongs} />
                             <OasisMenuBreak />
                             <OasisMenuItem content="Add to Library" disabled={!user} onClick={addSongsToLibrary} icon={<MdOutlinePlaylistAddCheck />} />
-                            <OasisMenuItem content="Add as Playlist" disabled={!user} icon={<MdOutlinePlaylistAdd />} />
+                            <OasisMenuItem content="Add as Playlist" disabled={!user} onClick={addSongsToPlaylist} icon={<MdOutlinePlaylistAdd />} />
                         </OasisMenu>
                     </div>
                     <Tippy content="Play">

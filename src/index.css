@@ -46,7 +46,7 @@
 
 .tippy-box[data-theme~='tippy-theme'] {
     background-color: #000000aa;
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(2px);
     padding: 4px 8px;
     border-radius: 5px;
     border: 1px solid #fff1;
@@ -56,7 +56,7 @@
 
 .oasismenu {
     background-color: #0e101ecc;
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(4px);
 
     &> div:has(> .oasisitem) {
         padding-block: 1px;
@@ -68,7 +68,7 @@
             background-color: #0004;
         }
         &:not(:disabled).oasishovered {
-            background-color: #fff1;
+            background-color: #fff2;
         }
     }
 }

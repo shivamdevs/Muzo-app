@@ -10,6 +10,7 @@ import AppData from './core/app/AppData';
 import { HAS_MEDIA_SESSION, useMediaSession } from '@mebtte/react-media-session';
 import keyValueObjectParse from './core/app/keyValueObjectParse';
 import convertHTMLEntities from './core/app/convertHTMLEntities';
+import sortBy from 'sort-by';
 
 function App() {
     const [user, userLoading, userError] = useAuthState(firebase.auth);
@@ -42,6 +43,9 @@ function App() {
         }
         return {};
     });
+    const [playListDialogBox, setPlayListDialogBox] = useState(null);
+    const [addAsPlayListDialogBox, setAddAsPlayListDialogBox] = useState(null);
+    const [playlistAutoAdded, setPlaylistAutoAdded] = useState(null);
 
     useEffect(() => {
         window.loadingOverlayRemove();
@@ -172,7 +176,16 @@ function App() {
         setPlayerQuerySearch,
 
         playerExtended,
-        setPlayerExtended
+        setPlayerExtended,
+
+        playListDialogBox,
+        setPlayListDialogBox,
+
+        addAsPlayListDialogBox,
+        setAddAsPlayListDialogBox,
+
+        playlistAutoAdded,
+        setPlaylistAutoAdded,
     };
 
     return (
@@ -180,7 +193,7 @@ function App() {
             {HAS_MEDIA_SESSION && playerSong && playerElement && <MediaSessionHook />}
             {user && <HookUserData
                 user={user}
-                playlist={setUserCDbPlayLists}
+                playlists={setUserCDbPlayLists}
                 favorites={setUserCDbFavorites}
             />}
             <AppWindow />
@@ -190,16 +203,35 @@ function App() {
 
 export default App;
 
-function HookUserData({ user, playlist, favorites }) {
-    const [userData, , userDataError] = useDocument(doc(firebase.store, "muzo", user.uid));
+function HookUserData({ user, playlists, favorites }) {
+    const [userFavorites, , userFavoritesError] = useDocument(doc(firebase.store, "muzo-favorites", user.uid));
+    const [userPlaylists, , userPlaylistsError] = useDocument(doc(firebase.store, "muzo-user-playlists", user.uid));
 
     useEffect(() => {
-        userDataError && console.error(userDataError);
-    }, [userDataError]);
+        (userFavoritesError || userPlaylistsError) && console.error(userFavoritesError, userPlaylistsError);
+    }, [userFavoritesError, userPlaylistsError]);
+
+    const sortPlaylists = useCallback(async (data) => {
+        if (data.doc.exists && data.data) {
+            const idArray = Object.entries(data.data)?.map(item => ({
+                id: item[0],
+                name: item[1].name,
+                date: item[1].date,
+            }))?.sort(sortBy("-date"));
+            if (idArray.length) {
+                playlists(idArray);
+            } else {
+                playlists([]);
+            }
+        } else {
+            playlists(null);
+
+        }
+    }, [playlists]);
 
     const sortFavorites = useCallback(async (data) => {
-        if (data.doc.exists && data.favorites) {
-            const idArray = Object.entries(data.favorites)?.filter(item => item[1])?.sort((a, b) => a[1] - b[1])?.map(item => item[0])?.sort();
+        if (data.doc.exists && data.data) {
+            const idArray = Object.entries(data.data)?.filter(item => item[1])?.sort((a, b) => a[1] - b[1])?.map(item => item[0])?.sort();
             const ids = (idArray || [])?.join(",");
             if (ids) {
                 axios.get(`${AppData.api}/songs?id=${ids}`).then((result) => {
@@ -225,22 +257,37 @@ function HookUserData({ user, playlist, favorites }) {
     }, [favorites]);
 
     useEffect(() => {
-        if (userData) {
+        if (userFavorites) {
             const data = {
-                ...(userData.data() || {}),
+                data: (userFavorites.data() || {}),
                 doc: {
-                    exists: userData.exists(),
-                    ref: userData.ref,
-                    org: userData,
-                    id: userData.id
+                    exists: userFavorites.exists(),
+                    ref: userFavorites.ref,
+                    org: userFavorites,
+                    id: userFavorites.id
                 },
             };
             sortFavorites(data);
 
         } else {
-            playlist(null);
+            favorites(null);
         }
-    }, [playlist, sortFavorites, userData]);
+        if (userPlaylists) {
+            const data = {
+                data: (userPlaylists.data() || {}),
+                doc: {
+                    exists: userPlaylists.exists(),
+                    ref: userPlaylists.ref,
+                    org: userPlaylists,
+                    id: userPlaylists.id
+                },
+            };
+            sortPlaylists(data);
+
+        } else {
+            playlists(null);
+        }
+    }, [favorites, playlists, sortFavorites, sortPlaylists, userFavorites, userPlaylists]);
 
     return null;
 }

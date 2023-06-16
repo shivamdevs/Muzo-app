@@ -13,6 +13,7 @@ import Accounts from 'myoasis-accounts';
 import Favorites from './pages/Favorites';
 import CollectionPage from './pages/CollectionPage';
 import CollectionSong from './pages/CollectionSong';
+import PlaylistPage from './pages/PlaylistPage';
 
 
 function Body() {
@@ -48,6 +49,8 @@ function Body() {
                     <Route path="/releases" element={<ShowAllSongs data={contentHome?.albums} title="New Releases" />} />
                     <Route path="/playlists" element={<ShowAllSongs data={contentHome?.playlists} title="Hit Playlists" />} />
                     <Route path="/charts" element={<ShowAllSongs data={contentHome?.charts} title="Top Charts" />} />
+
+                    <Route path="/playlists/up/:code" element={<PlaylistPage />} />
 
                     <Route path="/albums/:code" element={<CollectionPage type="albums" />} />
                     <Route path="/playlists/:code" element={<CollectionPage type="playlists" />} />

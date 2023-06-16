@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 
 function SideBar() {
-    const { user, userCDbPlayLists } = useContext(AppContext);
+    const { user, userLoading, userCDbPlayLists, playListDialogBox } = useContext(AppContext);
 
     return (
         <div id="sidebar">
@@ -16,13 +16,13 @@ function SideBar() {
             <NavBtn to="/playlists" name="Playlists" />
             <NavBtn to="/charts" name="Top Charts" />
 
-            {user && <>
+            {(userLoading || user) && <>
                 <div className="title">Library</div>
                 <NavBtn to="/favorites" name="Favorites" />
-                <NavBtn to="/me/playlists/new" name="New Playlist" />
+                <NavBtn onClick={() => playListDialogBox?.showModal()} name="New Playlist" />
 
                 <div className="title">Your Playlists</div>
-                {userCDbPlayLists?.map((list, index) => <NavBtn key={`${list?.id}${index}`} to={`/me/playlists/${list.id}`} name={list.name} />)}
+                {userCDbPlayLists?.map((list, index) => <NavBtn key={`${list?.id}${index}`} to={`/playlists/up/${list.id}`} name={list.name} />)}
                 {!userCDbPlayLists?.length && <div className="add-play">You don't have any playlist yet.<br />Create a new one!</div>}
             </>}
         </div>
@@ -32,7 +32,7 @@ function SideBar() {
 export default SideBar;
 
 
-function NavBtn({ name, to }) {
+function NavBtn({ name, to, onClick }) {
     const navigate = useNavigate();
     const location = useLocation();
     const btnRef = useRef();
@@ -45,6 +45,6 @@ function NavBtn({ name, to }) {
         }
     }, [location.pathname, to]);
     return (
-        <button type="button" ref={btnRef} className='bs-link' onClick={() => navigate(to)}>{name}</button>
+        <button type="button" ref={btnRef} className='bs-link' onClick={() => onClick?.() || (to && navigate(to))}>{name}</button>
     );
 }

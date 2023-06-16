@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PlayIcon from '../icons/PlayIcon';
 import Tippy from '@tippyjs/react';
 import "../../styles/Pagination.scss";
@@ -7,13 +7,36 @@ import convertHTMLEntities from '../../core/app/convertHTMLEntities';
 import AppContext from '../../core/app/AppContext';
 import { toast } from 'react-hot-toast';
 import removeDuplicateObjectsById from '../../core/app/removeDuplicateObjectsById';
-import addToLibrary, { deleteFromLibrary } from '../../core/firebase/addToLibrary';
+import addToLibrary from '../../core/firebase/addToLibrary';
 import { MdOutlinePlaylistAddCheck, MdOutlinePlaylistRemove, MdQueueMusic } from 'react-icons/md';
 import AddRemoveFavorite from '../user/AddRemoveFavorite';
+import { deleteField, doc, getDoc } from 'firebase/firestore';
+import firebase from '../../core/firebase/config';
 
 function SongCover({ cover, songs, asFav, removeFav }) {
 
     const { user, playerElement, updatePlayerList, updatePlayerIndex, userCDbFavorites } = useContext(AppContext);
+
+    const [artist, setArtist] = useState("Loading...");
+
+    useEffect(() => {
+        let artist = cover?.artist;
+        if (artist?.uid) {
+            const uid = artist.uid;
+            if (!uid) setArtist("Unable to find");
+            else if (uid === user?.uid) setArtist("You");
+            else {
+                getDoc(doc(firebase.store, "users", uid)).then((data) => {
+                    if (data.exists()) setArtist(data.data().name); else setArtist("Unable to find");
+                }).catch((err) => {
+                    console.error(err);
+                    setArtist("Unable to find");
+                });
+            }
+        } else {
+            setArtist(artist);
+        }
+    }, [cover?.artist, user?.uid]);
 
     const addSongs = async (e) => {
         e?.stopPropagation?.();
@@ -40,18 +63,16 @@ function SongCover({ cover, songs, asFav, removeFav }) {
         const cached = toast.loading('Adding songs to library...');
         const newIds = {};
         for (const item of songs) newIds[item.id] = Date.now();
-        console.log(newIds);
-        await addToLibrary(user, { favorites: newIds });
+        await addToLibrary(user, newIds);
         toast.success(`Added ${songs.length} song${songs.length > 1 ? "s" : ""} to library.`, { id: cached });
     };
 
     const removeSongFromLibrary = async (e) => {
         e?.stopPropagation?.();
         const cached = toast.loading('Removing song from library...');
-        await deleteFromLibrary(user, (response) => {
-            for (const song of songs) delete response?.favorites?.[song.id];
-            return response;
-        });
+        const newIds = {};
+        for (const item of songs) newIds[item.id] = deleteField();
+        await addToLibrary(user, newIds);
         toast.success(`Removed ${songs.length} song${songs.length > 1 ? "s" : ""} from library.`, { id: cached });
     };
 
@@ -67,7 +88,7 @@ function SongCover({ cover, songs, asFav, removeFav }) {
             </div>
             {cover && <div className="metadata">
                 <div className="name">{convertHTMLEntities(cover.name)}</div>
-                <div className="artist">{convertHTMLEntities(cover.artist)}</div>
+                <div className="artist">{convertHTMLEntities(artist)}</div>
                 <div className="blur"><span>Play time:</span> {parseTime(cover.play || cover.duration || 0)}</div>
                 {cover.label && <div className="artist">{convertHTMLEntities(cover.label)}</div>}
                 {cover.songs && <div className="blur"><span>Songs:</span> {cover.songs}</div>}

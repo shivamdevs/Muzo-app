@@ -5,6 +5,7 @@
     gap: 20px;
     align-items: center;
     justify-content: space-between;
+    background-color: #0004;
 
     .logo {
         display: inline-flex;
@@ -85,6 +86,7 @@
             height: 40px;
             transition: 0.2s;
             border-radius: 50%;
+            overflow: hidden;
             padding: 0;
             border: none;
             background-color: var(--bg-tertiary);

@@ -11,7 +11,7 @@
         width: calc(100% - 250px);
         height: 100%;
         overflow: auto;
-        transition: 0.4s;
+        transition: 0.2s;
 
         &> :not(:is(#footer, .home-content)) {
             z-index: 9997;
@@ -95,7 +95,7 @@
 
     &.subExtend {
         .home-content, #sidebar {
-            visibility: hidden;
+            // visibility: hidden;
             opacity: 0;
         }
 

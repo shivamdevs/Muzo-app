@@ -5,12 +5,13 @@ import Tippy from '@tippyjs/react';
 import { MdFavorite, MdFavoriteBorder, MdQueueMusic } from 'react-icons/md';
 import AppContext from '../../core/app/AppContext';
 import { toast } from 'react-hot-toast';
-import addToLibrary, { deleteFromLibrary } from '../../core/firebase/addToLibrary';
+import addToLibrary from '../../core/firebase/addToLibrary';
 import SongPlaying from '../icons/SongPlaying';
 import { GiPlayButton } from 'react-icons/gi';
 import classNames from 'classnames';
 import parseTime from '../../core/app/parseTime';
 import { useNavigate } from 'react-router-dom';
+import { deleteField } from 'firebase/firestore';
 
 function PreviewSong({ data = null, count, favorite }) {
 
@@ -56,9 +57,7 @@ function PreviewSong({ data = null, count, favorite }) {
         e?.stopPropagation?.();
         const cached = toast.loading('Adding song to library...');
         await addToLibrary(user, {
-            favorites: {
-                [data.id]: Date.now(),
-            }
+            [data.id]: Date.now(),
         });
         toast.success(`Added 1 song to library.`, { id: cached });
     };
@@ -66,17 +65,9 @@ function PreviewSong({ data = null, count, favorite }) {
     const removeSongFromLibrary = async (e) => {
         e?.stopPropagation?.();
         const cached = toast.loading('Removing song from library...');
-        await deleteFromLibrary(user, (response) => {
-            delete response?.favorites?.[data.id];
-            return response;
+        await addToLibrary(user, {
+            [data.id]: deleteField(),
         });
-        // setUserCDbFavorites(old => {
-        //     if (old && Array.isArray(old)) {
-        //         const list = [...old];
-        //         list.splice(list.findIndex(it => it.id === data.id), 1);
-        //         return list;
-        //     }
-        // });
         toast.success(`Removed 1 song from library.`, { id: cached });
     };
 
@@ -108,7 +99,7 @@ function PreviewSong({ data = null, count, favorite }) {
                     </div>
                 </div>
                 <span className="time">{parseTime(parseInt(data.duration))}</span>
-                <Tippy content={favorite ? "Remove from Favorites" : "Add to favorite"}><div className="button" onClick={(favorite ? removeSongFromLibrary : addSongToLibrary)}>{favorite ? <MdFavorite /> : <MdFavoriteBorder />}</div></Tippy>
+                {user && <Tippy content={favorite ? "Remove from Favorites" : "Add to favorite"}><div className="button" onClick={(favorite ? removeSongFromLibrary : addSongToLibrary)}>{favorite ? <MdFavorite /> : <MdFavoriteBorder />}</div></Tippy>}
                 <Tippy content="Add to queue"><div className={classNames("button", { hide: playing })} onClick={addSongToQueue}><MdQueueMusic /></div></Tippy>
             </button>
         </div>

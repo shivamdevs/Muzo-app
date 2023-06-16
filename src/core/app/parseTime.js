@@ -6,3 +6,7 @@ export default function parseTime(totalSeconds) {
 
     return ((hours > 0) ? String(hours).padStart(2, "0") + ':' : '') + (hours > 0 ? String(minutes).padStart(2, "0") : minutes) + ':' + String(seconds).padStart(2, "0");
 };
+
+export function parseDate(date) {
+    return date ? new Date(date).toISOString().slice(0, 10) : "";
+}

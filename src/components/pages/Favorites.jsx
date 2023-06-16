@@ -6,7 +6,7 @@ import { MdOutlineFavoriteBorder } from 'react-icons/md';
 function Favorites() {
 
     const { user, userCDbFavorites } = useContext(AppContext);
-    console.log(userCDbFavorites);
+
     return (
         <Pagination title={userCDbFavorites?.length ? null : "Favorites"} cover={userCDbFavorites?.[0] && {
             image: userCDbFavorites?.[0].image[2].link,

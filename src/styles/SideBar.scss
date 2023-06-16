@@ -1,6 +1,7 @@
 #sidebar {
     width: 240px;
-    padding: 20px 0;
+    padding: 20px 10px 20px 0;
+    overflow: hidden auto;
 
     .title {
         color: var(--text-secondary);

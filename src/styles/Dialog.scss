@@ -1,0 +1,145 @@
+dialog {
+    border: none;
+    padding: 20px;
+    width: 480px;
+    background-color: var(--bg-secondary);
+    border-radius: 10px;
+    border: 1px solid #fff2;
+
+    &::backdrop {
+        background-color: #0007;
+        backdrop-filter: blur(2px);
+    }
+
+    .title {
+        font-weight: 600;
+        font-size: 20px;
+    }
+
+    form,
+    .form {
+        display: block;
+        width: 100%;
+
+        fieldset {
+            display: block;
+            width: 100%;
+            margin-block: 20px;
+            padding: 10px 0;
+            border: none;
+
+            input {
+                width: 100%;
+                display: block;
+                padding: 10px;
+                border: none;
+                border-bottom: 3px solid #fff2;
+                background-color: #ffffff09;
+                outline: none;
+                transition: 0.2s;
+
+                &:focus {
+                    border-bottom-color: #a200ff;
+                }
+            }
+        }
+
+        .btn {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+
+            button {
+                flex: 1;
+                display: flex;
+                padding: 10px 20px;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+                border-radius: 4px;
+                border: none;
+                transition: 0.2s;
+
+                &:disabled {
+                    background-color: #0009;
+                }
+
+                &:not(:disabled):is(:hover, :focus-visible) {
+                    cursor: pointer;
+                }
+
+                &[type=reset] {
+                    background-color: #791618;
+
+                    &:not(:disabled):is(:hover, :focus-visible) {
+                        background-color: #ff0004;
+                    }
+                }
+
+                &[type=submit] {
+                    background-color: #531776;
+
+                    &:not(:disabled):is(:hover, :focus-visible) {
+                        background-color: #a200ff;
+                    }
+                }
+            }
+        }
+
+        .infos {
+            font-size: 14px;
+            color: #727888;
+        }
+
+        .error {
+            font-weight: 600;
+            font-size: 14px;
+            color: rgb(255, 47, 0);
+            padding: 8px 10px 0;
+        }
+    }
+
+    .add-to-playlist {
+        margin-block: 20px;
+
+        button {
+            display: flex;
+            width: 100%;
+            word-wrap: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 8px 15px;
+            text-align: left;
+            margin-block: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #727888;
+            transition: 0.2s;
+            border: none;
+            align-items: center;
+            gap: 20px;
+            background-color: #ffffff09;
+
+            &:is(:hover, :focus-visible) {
+                background-color: #fff2;
+                color: #fff;
+                cursor: pointer;
+            }
+
+            &:first-of-type {
+                margin-bottom: 30px;
+                color: #fff;
+                background-color: #531776;
+
+                &:is(:hover, :focus-visible) {
+                    background-color: #a200ff;
+                }
+            }
+        }
+    }
+}

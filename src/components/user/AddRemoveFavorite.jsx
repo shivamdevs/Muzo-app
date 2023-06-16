@@ -3,6 +3,7 @@ import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import addToLibrary, { deleteFromLibrary } from '../../core/firebase/addToLibrary';
 import Tippy from '@tippyjs/react';
+import { deleteField } from 'firebase/firestore';
 
 function AddRemoveFavorite({ song, className = null, user, favorites }) {
 
@@ -14,9 +15,7 @@ function AddRemoveFavorite({ song, className = null, user, favorites }) {
         e?.stopPropagation?.();
         const cached = toast.loading('Adding song to library...');
         await addToLibrary(user, {
-            favorites: {
-                [song.id]: Date.now(),
-            }
+            [song.id]: Date.now(),
         });
         toast.success(`Added 1 song to library.`, { id: cached });
     };
@@ -24,17 +23,9 @@ function AddRemoveFavorite({ song, className = null, user, favorites }) {
     const removeSongFromLibrary = async (e) => {
         e?.stopPropagation?.();
         const cached = toast.loading('Removing song from library...');
-        await deleteFromLibrary(user, (response) => {
-            delete response?.favorites?.[song.id];
-            return response;
+        await addToLibrary(user, {
+            [song.id]: deleteField(),
         });
-        // setUserCDbFavorites(old => {
-        //     if (old && Array.isArray(old)) {
-        //         const list = [...old];
-        //         list.splice(list.findIndex(it => it.id === data.id), 1);
-        //         return list;
-        //     }
-        // });
         toast.success(`Removed 1 song from library.`, { id: cached });
     };
     return (
