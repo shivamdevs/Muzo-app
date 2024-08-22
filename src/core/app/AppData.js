@@ -10,10 +10,10 @@ const AppData = {
     storage: "muzo:settings",
     bucket: "muzo:saved:songs",
 
-    api: "https://saavn.me",
+    api: "https://saavn.dev/api",
     apiPath: {
-        home: "https://saavn.me/modules?language=hindi,english",
-        search: "https://saavn.me/search/all?query=",
+        home: "https://saavn.dev/api/modules?language=hindi,english",
+        search: "https://saavn.dev/api/search?query=",
     },
 };
 
